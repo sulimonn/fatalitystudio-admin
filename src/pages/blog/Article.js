@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Paper } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { TextField, Button, Grid, Paper, Box, ButtonGroup, Divider, ImageList, ImageListItem } from '@mui/material';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Divider } from '@mui/material';
 import InputFileUpload from 'components/@extended/InputFile';
-import { Box } from '@mui/material';
-import { ImageList, ImageListItem } from '@mui/material';
-import { updatePost } from 'store/reducers/blog';
-import { useNavigate } from 'react-router-dom';
+import { removePost, updatePost } from 'store/reducers/blog';
 
 const Article = () => {
   const { id } = useParams();
@@ -24,8 +20,16 @@ const Article = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updatePost({ id: article.id, title: title, content, preview, section1, section2 }));
-    console.log(article);
     navigate('/blog');
+    alert('Post updated successfully');
+  };
+  const handleDelete = (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this post?');
+    if (confirmed) {
+      dispatch(removePost(id));
+      navigate('/blog');
+      alert('Post deleted successfully');
+    }
   };
   return (
     <Grid item xs={10} sm={8} md={6}>
@@ -120,9 +124,15 @@ const Article = () => {
             value={section2.text}
             onChange={(e) => setSection2({ ...section2, text: e.target.value })}
           />
-          <Button type="submit" variant="contained" color="primary">
-            Сохранить
-          </Button>
+          <ButtonGroup variant="contained" color="primary">
+            <Button type="submit">Сохранить</Button>
+            <Button color="error" onClick={() => handleDelete(article.id)}>
+              Удалить
+            </Button>
+            <Button color="secondary" component={Link} to={'https://fatalitystudio.netlify.app/blog/' + id} target="_blank">
+              Посмотреть на сайте
+            </Button>
+          </ButtonGroup>
         </form>
       </Paper>
     </Grid>

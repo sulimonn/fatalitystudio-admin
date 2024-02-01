@@ -18,6 +18,9 @@ const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons'
 const Applications = Loadable(lazy(() => import('pages/requests/Applications')));
 const WebPages = Loadable(lazy(() => import('pages/requests/WebPages')));
 const CRM = Loadable(lazy(() => import('pages/requests/CRM')));
+const Delivery = Loadable(lazy(() => import('pages/requests/Delivery')));
+const Design = Loadable(lazy(() => import('pages/requests/Design')));
+const Seo = Loadable(lazy(() => import('pages/requests/Seo')));
 const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
 const Article = Loadable(lazy(() => import('pages/blog/Article')));
 
@@ -45,6 +48,18 @@ const MainRoutes = {
         {
           path: 'crm',
           element: <CRM />
+        },
+        {
+          path: 'development-delivery',
+          element: <Delivery />
+        },
+        {
+          path: 'design',
+          element: <Design />
+        },
+        {
+          path: 'seo',
+          element: <Seo />
         }
       ]
     },

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box } from '../../../node_modules/@mui/material/index';
+import Request from './Request';
 
 const Applications = () => {
-  return <Box></Box>;
+  return <Request type={'app'} />;
 };
 
 export default Applications;

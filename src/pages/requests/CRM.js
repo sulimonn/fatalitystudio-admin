@@ -1,7 +1,8 @@
 import React from 'react';
+import Requests from './Request';
 
 const CRM = () => {
-  return <div></div>;
+  return <Requests type="crm" />;
 };
 
 export default CRM;

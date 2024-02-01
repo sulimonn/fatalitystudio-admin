@@ -4,7 +4,7 @@
   "private": false,
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^4.8.1",
     "@emotion/cache": "^11.10.3",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -74,6 +74,7 @@
     "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.21.3",
     "@mui/icons-material": "^5.15.7",
+    "@mui/x-data-grid": "^6.19.2",
     "@reduxjs/toolkit": "^2.1.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
