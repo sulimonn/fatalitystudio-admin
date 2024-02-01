@@ -25,7 +25,7 @@ export const register = (userData) => ({
 });
 
 const initialState = {
-  isLoggedIn: false,
+  isLoggedIn: true,
   user: {
     name: 'sulaiman',
     email: 'info@codedthemes.com',

@@ -14,6 +14,20 @@ const requests = createSlice({
       reviewed: false
     },
     {
+      id: '16',
+      name: 'Евгений Овчинников',
+      phoneNumber: '+7 999 999 99 99',
+      serviceId: '1',
+      reviewed: false
+    },
+    {
+      id: '26',
+      name: 'Елена Михайлова',
+      phoneNumber: '+7 999 999 99 99',
+      serviceId: '1',
+      reviewed: true
+    },
+    {
       id: '2',
       name: 'Алексей Кириллов',
       phoneNumber: '+7 999 999 99 99',

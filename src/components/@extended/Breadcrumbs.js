@@ -8,13 +8,15 @@ import { Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from '../MainCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { activeItem } from 'store/reducers/menu';
 
 // ==============================|| BREADCRUMBS ||============================== //
 
-const Breadcrumbs = ({ navigation, title, ...others }) => {
+const Breadcrumbs = ({ navigation, ...others }) => {
   const location = useLocation();
   const activeMenu = useSelector((state) => state.menu);
+  const dispatch = useDispatch();
   const [main, setMain] = useState();
   const [item, setItem] = useState();
 
@@ -75,6 +77,10 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
       </Typography>
     );
 
+    const handleClick = () => {
+      dispatch(activeItem({ openItem: ['application1'] }));
+    };
+
     // main
     if (item.breadcrumbs !== false) {
       breadcrumbContent = (
@@ -82,18 +88,20 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
             <Grid item>
               <MuiBreadcrumbs aria-label="breadcrumb">
-                <Typography component={Link} to="/" color="textSecondary" variant="h6" sx={{ textDecoration: 'none' }}>
+                <Typography
+                  component={Link}
+                  to="/"
+                  color="textSecondary"
+                  variant="h6"
+                  sx={{ textDecoration: 'none' }}
+                  onClick={handleClick}
+                >
                   Home
                 </Typography>
                 {mainContent}
                 {itemContent}
               </MuiBreadcrumbs>
             </Grid>
-            {title && (
-              <Grid item sx={{ mt: 2 }}>
-                <Typography variant="h5">{item.title}</Typography>
-              </Grid>
-            )}
           </Grid>
         </MainCard>
       );

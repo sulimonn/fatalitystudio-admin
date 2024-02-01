@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ const AuthenticatedComponent = ({ isLoggedIn, children }) => {
     }
   }, [isLoggedIn, navigate]);
 
-  return <>{children}</>;
+  return children;
 };
 
 AuthenticatedComponent.propTypes = {

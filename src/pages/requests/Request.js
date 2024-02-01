@@ -13,20 +13,18 @@ const Requests = ({ type }) => {
 
   const appRequests = useSelector((state) => state.requests.filter((request) => request.serviceId === service.id)).map((request) => {
     return {
-      id: request.id,
-      name: request.name,
-      phoneNumber: request.phoneNumber,
+      ...request,
       serviceId: service.title
     };
   });
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 130 },
+    { field: 'name', headerName: 'Name', width: 160 },
     {
       field: 'phoneNumber',
       headerName: 'Phone Number',
-      width: 150,
+      width: 190,
       sortable: false,
       renderCell: (params) => (
         <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
@@ -34,16 +32,19 @@ const Requests = ({ type }) => {
         </Link>
       )
     },
-    { field: 'serviceId', headerName: 'Interested Service', width: 200 },
+    { field: 'serviceId', headerName: 'Interested Service', width: 250 },
     {
       field: 'reviewed',
       headerName: 'Reviewed',
       width: 100,
-      sortable: false,
       renderCell: (params) => (
-        <Checkbox checked={params.row.reviewed} sx={{ outline: 'none !important' }} onClick={() => handleReview(params.row.id)}>
-          Review
-        </Checkbox>
+        <>
+          <Checkbox
+            checked={params.row.reviewed}
+            sx={{ outline: 'none !important' }}
+            onClick={() => handleReview(params.row.id)}
+          ></Checkbox>
+        </>
       )
     }
   ];
@@ -52,11 +53,26 @@ const Requests = ({ type }) => {
   };
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div
+      style={{
+        height: 400,
+        width: '100%',
+        '& .MuiDataGrid-root': {
+          borderColor: 'secondary.dark !important'
+        }
+      }}
+    >
       <DataGrid
-        sx={{ '& .MuiDataGrid-cell': { outline: 'none !important' }, textDecoration: 'none !important' }}
+        sx={{
+          '& .MuiDataGrid-cell': {
+            outline: 'none !important'
+          },
+          textDecoration: 'none !important'
+        }}
         rows={appRequests}
         columns={columns}
+        showCellVerticalBorder
+        showColumnVerticalBorder
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 }
