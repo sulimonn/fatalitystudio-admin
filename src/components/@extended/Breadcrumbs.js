@@ -8,11 +8,13 @@ import { Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from '../MainCard';
+import { useSelector } from 'react-redux';
 
 // ==============================|| BREADCRUMBS ||============================== //
 
 const Breadcrumbs = ({ navigation, title, ...others }) => {
   const location = useLocation();
+  const activeMenu = useSelector((state) => state.menu);
   const [main, setMain] = useState();
   const [item, setItem] = useState();
 
@@ -24,6 +26,9 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
           if (location.pathname === collapse.url) {
+            setMain(menu);
+            setItem(collapse);
+          } else if (location.pathname === '/' && collapse.id === activeMenu.defaultId) {
             setMain(menu);
             setItem(collapse);
           }

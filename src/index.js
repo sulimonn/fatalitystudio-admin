@@ -15,6 +15,7 @@ import 'assets/third-party/apex-chart.css';
 import App from './App';
 import { store } from 'store';
 import reportWebVitals from './reportWebVitals';
+import AuthenticatedComponent from 'components/AuthenticatedComponent';
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
@@ -24,7 +25,9 @@ root.render(
   <StrictMode>
     <ReduxProvider store={store}>
       <BrowserRouter basename="/admin">
-        <App />
+        <AuthenticatedComponent isLoggedIn={store.getState().auth.isLoggedIn}>
+          <App />
+        </AuthenticatedComponent>
       </BrowserRouter>
     </ReduxProvider>
   </StrictMode>

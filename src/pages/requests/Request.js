@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
@@ -22,7 +23,17 @@ const Requests = ({ type }) => {
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'name', headerName: 'Name', width: 130 },
-    { field: 'phoneNumber', headerName: 'Phone Number', width: 150 },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      width: 150,
+      sortable: false,
+      renderCell: (params) => (
+        <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
+          {params.row.phoneNumber}
+        </Link>
+      )
+    },
     { field: 'serviceId', headerName: 'Interested Service', width: 200 },
     {
       field: 'reviewed',
@@ -43,11 +54,16 @@ const Requests = ({ type }) => {
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
-        sx={{ '& .MuiDataGrid-cell': { outline: 'none !important' } }}
+        sx={{ '& .MuiDataGrid-cell': { outline: 'none !important' }, textDecoration: 'none !important' }}
         rows={appRequests}
         columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5, 10]}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 5 }
+          }
+        }}
+        pageSizeOptions={[5, 10]}
+        disableRowSelectionOnClick
       />
     </div>
   );

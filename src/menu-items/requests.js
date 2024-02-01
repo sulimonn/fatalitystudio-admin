@@ -1,12 +1,12 @@
 // assets
-import { AppstoreAddOutlined, LayoutOutlined, TeamOutlined, FundOutlined } from '@ant-design/icons';
-import { DeliveryDiningOutlined, DesignServicesOutlined } from '@mui/icons-material';
+import { AppstoreAddOutlined, LayoutOutlined, FundOutlined } from '@ant-design/icons';
+import { DeliveryDiningOutlined, DesignServicesOutlined, DisplaySettingsOutlined } from '@mui/icons-material';
 
 // icons
 const icons = {
   AppstoreAddOutlined,
   LayoutOutlined,
-  TeamOutlined,
+  DisplaySettingsOutlined,
   DeliveryDiningOutlined,
   DesignServicesOutlined,
   FundOutlined
@@ -38,7 +38,7 @@ const requests = {
       title: 'CRM',
       type: 'item',
       url: '/requests/crm',
-      icon: icons.TeamOutlined
+      icon: icons.DisplaySettingsOutlined
     },
     {
       id: 'delivery1',

@@ -1,13 +1,14 @@
 // project import
 import blog from './blog';
-import dashboard from './dashboard';
+import feedback from './feedback';
 import pages from './pages';
 import requests from './requests';
+import team from './team';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [dashboard, requests, blog, pages]
+  items: [requests, blog, feedback, team, pages]
 };
 
 export default menuItems;
