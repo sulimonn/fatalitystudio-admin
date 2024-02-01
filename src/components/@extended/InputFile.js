@@ -16,7 +16,7 @@ const InputFileUpload = ({ setFile, children, setPreview }) => {
   return (
     <Button component="label" variant="contained" startIcon={<CloudDownloadIcon />}>
       {children}
-      <input accept="image/*" required type="file" style={{ display: 'none' }} onChange={handleFileChange} />
+      <input accept="image/*" type="file" style={{ display: 'none' }} onChange={handleFileChange} />
     </Button>
   );
 };

@@ -60,6 +60,9 @@ const blogSlice = createSlice({
       state.posts = state.posts.map((post) => {
         if (post.id === action.payload.id) {
           post.title = action.payload.title;
+          post.section1 = action.payload.section1;
+          post.section2 = action.payload.section2;
+          post.date = new Date().getDate.toString();
         }
         return post;
       });
