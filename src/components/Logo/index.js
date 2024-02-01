@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Logo from './Logo';
 import config from 'config';
 import { activeItem } from 'store/reducers/menu';
-
+import Typography from '@mui/material/Typography';
 // ==============================|| MAIN LOGO ||============================== //
 
 const LogoSection = ({ sx, to }) => {
@@ -24,6 +24,9 @@ const LogoSection = ({ sx, to }) => {
       sx={sx}
     >
       <Logo />
+      <Typography variant="h3" color="inherit" sx={{ ml: 1, fontWeight: 700 }}>
+        FatalityStudio
+      </Typography>
     </ButtonBase>
   );
 };

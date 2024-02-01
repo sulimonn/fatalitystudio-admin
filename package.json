@@ -2,7 +2,6 @@
   "name": "mantis-free-react-admin-template",
   "version": "1.1.2",
   "private": true,
-  "homepage": "https://mantisdashboard.io/free",
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons": "^4.7.0",
@@ -11,7 +10,6 @@
     "@emotion/styled": "^11.10.4",
     "@mui/lab": "^5.0.0-alpha.100",
     "@mui/material": "^5.10.6",
-    "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -75,6 +73,8 @@
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.21.3",
+    "@mui/icons-material": "^5.15.7",
+    "@reduxjs/toolkit": "^2.1.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",

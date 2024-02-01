@@ -31,7 +31,19 @@ const Palette = (mode) => {
   colors.grey = [...greyPrimary, ...greyAscent, ...greyConstant];
 
   const paletteColor = ThemeOption(colors);
-
+  paletteColor.primary = {
+    100: '#bae7ff',
+    200: '#91d5ff',
+    400: '#40a9ff',
+    700: '#242424',
+    900: '#141416',
+    lighter: '#FFD95120',
+    light: '#FFD95150',
+    main: '#FFD951',
+    dark: '#FF000030',
+    darker: '#FF000063',
+    contrastText: '#141416'
+  };
   return createTheme({
     palette: {
       mode,
@@ -39,19 +51,20 @@ const Palette = (mode) => {
         black: '#000',
         white: '#fff'
       },
+
       ...paletteColor,
       text: {
-        primary: paletteColor.grey[700],
+        primary: paletteColor.grey[100],
         secondary: paletteColor.grey[500],
         disabled: paletteColor.grey[400]
       },
       action: {
-        disabled: paletteColor.grey[300]
+        disabled: paletteColor.grey[600]
       },
-      divider: paletteColor.grey[200],
+      divider: paletteColor.grey[700],
       background: {
-        paper: paletteColor.grey[0],
-        default: paletteColor.grey.A50
+        paper: paletteColor.grey[700],
+        default: paletteColor.grey[900]
       }
     }
   });

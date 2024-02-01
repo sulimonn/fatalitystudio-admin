@@ -105,6 +105,7 @@ dist
 
 # Backup file
 *.bak
+.history
 
 #output
 build

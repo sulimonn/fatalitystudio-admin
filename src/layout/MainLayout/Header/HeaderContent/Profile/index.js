@@ -79,7 +79,7 @@ const Profile = () => {
     setValue(newValue);
   };
 
-  const iconBackColorOpen = 'grey.300';
+  const iconBackColorOpen = 'primary.lighter';
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -88,7 +88,7 @@ const Profile = () => {
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : 'transparent',
           borderRadius: 1,
-          '&:hover': { bgcolor: 'secondary.lighter' }
+          '&:hover': { bgcolor: 'primary.light' }
         }}
         aria-label="open profile"
         ref={anchorRef}
@@ -98,7 +98,7 @@ const Profile = () => {
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Typography variant="subtitle1">Sula</Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -149,7 +149,7 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
+                          <IconButton size="large" color="primary" onClick={handleLogout}>
                             <LogoutOutlined />
                           </IconButton>
                         </Grid>

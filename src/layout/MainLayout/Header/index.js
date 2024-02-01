@@ -17,8 +17,8 @@ const Header = ({ open, handleDrawerToggle }) => {
   const theme = useTheme();
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const iconBackColor = 'grey.100';
-  const iconBackColorOpen = 'grey.200';
+  const iconBackColor = 'grey.700';
+  const iconBackColorOpen = 'grey.900';
 
   // common header
   const mainHeader = (
@@ -28,7 +28,7 @@ const Header = ({ open, handleDrawerToggle }) => {
         aria-label="open drawer"
         onClick={handleDrawerToggle}
         edge="start"
-        color="secondary"
+        color="transparent"
         sx={{ color: 'text.primary', bgcolor: open ? iconBackColorOpen : iconBackColor, ml: { xs: 0, lg: -2 } }}
       >
         {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
