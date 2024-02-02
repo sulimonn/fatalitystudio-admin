@@ -15,9 +15,9 @@ const Item = styled(Paper)(({ theme }) => ({
   display: 'flex',
   gap: 20,
   height: '100%',
-  flexDirection: 'column',
-  [theme.breakpoints.up('xs')]: {
-    flexDirection: 'row'
+  flexDirection: 'row',
+  '@media (max-width: 550px)': {
+    flexDirection: 'column'
   }
 }));
 
@@ -31,34 +31,52 @@ const Blog = () => {
     }
   };
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        {articles.map((article) => (
-          <Grid item xs={12} sm={6} md={6} key={article.id}>
-            <Item>
-              <Box display="flex" justifyContent="center" minWidth={'30%'} height={170} borderRadius={2} overflow="hidden">
-                <img style={{ objectFit: 'cover' }} src={require(`assets/images/blog/${article.src}`)} alt="img" loading="lazy" />
-              </Box>
-              <Box textAlign="left" display="flex" flexDirection="column" justifyContent="space-between" gap={2}>
-                <Box>
-                  <Typography variant="h5">{article.title}</Typography>
-                  <Typography variant="body1">{article.text}</Typography>
+    <>
+      <Box display="flex" justifyContent="flex-end">
+        <Button component={Link} to="/blog/new" variant="contained" color="primary" style={{ marginBottom: 20 }}>
+          Добавить статью
+        </Button>
+      </Box>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          {articles.map((article) => (
+            <Grid item xs={12} sm={6} md={6} key={article.id}>
+              <Item>
+                <Box display="flex" justifyContent="center" minWidth={'30%'} height={170} borderRadius={2} overflow="hidden">
+                  <img style={{ objectFit: 'cover' }} src={require(`assets/images/blog/${article.src}`)} alt="img" loading="lazy" />
                 </Box>
+                <Box textAlign="left" display="flex" flexDirection="column" justifyContent="space-between" gap={2}>
+                  <Box>
+                    <Typography variant="h5">{article.title}</Typography>
+                    <Typography variant="body1">{article.text}</Typography>
+                  </Box>
 
-                <Box display="flex" justifyContent="flex-end" gap={2}>
-                  <Button color="primary" variant="outlined" component={Link} to={'/blog/' + article.id} style={{ textDecoration: 'none' }}>
-                    Изменить
-                  </Button>
-                  <Button color="secondary" variant="outlined" style={{ textDecoration: 'none' }} onClick={() => handleDelete(article.id)}>
-                    Удалить
-                  </Button>
+                  <Box display="flex" justifyContent="flex-end" gap={2}>
+                    <Button
+                      color="primary"
+                      variant="outlined"
+                      component={Link}
+                      to={'/blog/' + article.id}
+                      style={{ textDecoration: 'none' }}
+                    >
+                      Изменить
+                    </Button>
+                    <Button
+                      color="secondary"
+                      variant="outlined"
+                      style={{ textDecoration: 'none' }}
+                      onClick={() => handleDelete(article.id)}
+                    >
+                      Удалить
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            </Item>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+              </Item>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </>
   );
 };
 

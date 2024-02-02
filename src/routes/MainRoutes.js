@@ -71,6 +71,10 @@ const MainRoutes = {
         {
           path: ':id',
           element: <Article />
+        },
+        {
+          path: 'new',
+          element: <Article />
         }
       ]
     },
@@ -83,7 +87,7 @@ const MainRoutes = {
       element: <Team />
     },
     {
-      path: 'potrfolio',
+      path: 'portfolio',
       children: [
         {
           path: 'applications',

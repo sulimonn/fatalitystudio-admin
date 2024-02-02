@@ -2,24 +2,28 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 // material-ui
-import { Box, List, Typography, FormControlLabel, Collapse } from '@mui/material';
+import { Box, List, Typography, Collapse } from '@mui/material';
 import { ArrowDownOutlined } from '@ant-design/icons';
 
 // project import
 import NavItem from './NavItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ==============================|| NAVIGATION - LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
   const menu = useSelector((state) => state.menu);
+  const { openItem } = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
-  console.log(item);
-  const [collapsed, setCollapsed] = useState();
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
   };
+
+  useEffect(() => {
+    setCollapsed(item.children.find((child) => child.id === openItem[0]) ? true : false);
+  }, [openItem, item]);
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
@@ -39,23 +43,25 @@ const NavGroup = ({ item }) => {
       subheader={
         item.title &&
         drawerOpen && (
-          <Box sx={{ pl: 3, mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={toggleCollapse}>
+          <Box onClick={toggleCollapse} sx={{ pl: 3, mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="subtitle2" color="textSecondary">
               {item.title}
             </Typography>
-            <FormControlLabel
-              control={
-                <ArrowDownOutlined
-                  style={{ opacity: 0.5, cursor: 'pointer', transform: collapsed ? 'rotate(0)' : 'rotate(-180deg)', transition: '0.2s' }}
-                />
-              }
+            <ArrowDownOutlined
+              style={{
+                opacity: 0.5,
+                cursor: 'pointer',
+                transform: collapsed ? 'rotate(0)' : 'rotate(-180deg)',
+                transition: '0.2s',
+                margin: '0 10px'
+              }}
             />
           </Box>
         )
       }
       sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
     >
-      <Collapse in={!collapsed}>{navCollapse}</Collapse>
+      <Collapse in={collapsed}>{navCollapse}</Collapse>
     </List>
   );
 };

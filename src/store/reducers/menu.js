@@ -7,7 +7,8 @@ const initialState = {
   defaultId: 'application1',
   openComponent: 'buttons',
   drawerOpen: true,
-  componentDrawerOpen: true
+  componentDrawerOpen: true,
+  navCollapsed: false
 };
 
 // ==============================|| SLICE - MENU ||============================== //
