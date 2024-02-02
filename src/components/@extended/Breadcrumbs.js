@@ -49,11 +49,6 @@ const Breadcrumbs = ({ navigation, ...others }) => {
     });
   });
 
-  // only used for component demo breadcrumbs
-  if (location.pathname === '/breadcrumbs') {
-    location.pathname = '/dashboard/analytics';
-  }
-
   let mainContent;
   let itemContent;
   let breadcrumbContent = <Typography />;
@@ -112,8 +107,7 @@ const Breadcrumbs = ({ navigation, ...others }) => {
 };
 
 Breadcrumbs.propTypes = {
-  navigation: PropTypes.object,
-  title: PropTypes.bool
+  navigation: PropTypes.object
 };
 
 export default Breadcrumbs;

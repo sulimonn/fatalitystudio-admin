@@ -19,12 +19,12 @@ const Requests = ({ type }) => {
   });
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'id', headerName: 'ID', width: 20 },
     { field: 'name', headerName: 'Name', width: 160 },
     {
       field: 'phoneNumber',
       headerName: 'Phone Number',
-      width: 190,
+      width: 160,
       sortable: false,
       renderCell: (params) => (
         <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
@@ -32,18 +32,18 @@ const Requests = ({ type }) => {
         </Link>
       )
     },
-    { field: 'serviceId', headerName: 'Interested Service', width: 250 },
+    { field: 'serviceId', headerName: 'Interested Service', width: 180 },
     {
       field: 'reviewed',
       headerName: 'Reviewed',
-      width: 100,
+      width: 80,
       renderCell: (params) => (
         <>
           <Checkbox
             checked={params.row.reviewed}
-            sx={{ outline: 'none !important' }}
+            sx={{ outline: 'none !important', mx: 'auto' }}
             onClick={() => handleReview(params.row.id)}
-          ></Checkbox>
+          />
         </>
       )
     }
@@ -56,10 +56,7 @@ const Requests = ({ type }) => {
     <div
       style={{
         height: 400,
-        width: '100%',
-        '& .MuiDataGrid-root': {
-          borderColor: 'secondary.dark !important'
-        }
+        width: '100%'
       }}
     >
       <DataGrid

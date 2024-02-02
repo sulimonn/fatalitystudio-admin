@@ -14,7 +14,11 @@ const Item = styled(Paper)(({ theme }) => ({
   cursor: 'pointer',
   display: 'flex',
   gap: 20,
-  height: '100%'
+  height: '100%',
+  flexDirection: 'column',
+  [theme.breakpoints.up('xs')]: {
+    flexDirection: 'row'
+  }
 }));
 
 const Blog = () => {
@@ -32,7 +36,7 @@ const Blog = () => {
         {articles.map((article) => (
           <Grid item xs={12} sm={6} md={6} key={article.id}>
             <Item>
-              <Box display="flex" justifyContent="center" width={300} height={170} borderRadius={2} overflow="hidden">
+              <Box display="flex" justifyContent="center" minWidth={'30%'} height={170} borderRadius={2} overflow="hidden">
                 <img style={{ objectFit: 'cover' }} src={require(`assets/images/blog/${article.src}`)} alt="img" loading="lazy" />
               </Box>
               <Box textAlign="left" display="flex" flexDirection="column" justifyContent="space-between" gap={2}>

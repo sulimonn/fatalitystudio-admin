@@ -14,7 +14,8 @@ import { useState } from 'react';
 const NavGroup = ({ item }) => {
   const menu = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
-  const [collapsed, setCollapsed] = useState(false); // State to manage collapse
+  console.log(item);
+  const [collapsed, setCollapsed] = useState();
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);

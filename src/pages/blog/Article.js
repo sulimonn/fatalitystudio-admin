@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Paper, Box, ButtonGroup, Divider, ImageList, ImageListItem } from '@mui/material';
+import { TextField, Button, Grid, Paper, Box, Divider } from '@mui/material';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import InputFileUpload from 'components/@extended/InputFile';
@@ -35,6 +35,16 @@ const Article = () => {
     <Grid item xs={10} sm={8} md={6}>
       <Paper elevation={3} style={{ padding: 20, bgImage: 'none' }}>
         <form onSubmit={handleSubmit} method="post">
+          <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+            <Box cols={1} height={{ xs: 200, md: 300 }} width="300" borderRadius={2}>
+              <img src={`${preview}`} alt="img" loading="lazy" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <InputFileUpload setPreview={setPreview} file={file} setFile={setFile}>
+                Загрузить обложку
+              </InputFileUpload>
+            </Box>
+          </Box>
           <TextField
             required
             label="Заголовок"
@@ -55,18 +65,6 @@ const Article = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <Box display="flex" justifyContent="center" alignItems="center" gap="20px">
-            <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setPreview} file={file} setFile={setFile}>
-                Загрузить фото
-              </InputFileUpload>
-            </Box>
-            <ImageList cols={1} rowHeight={164} sx={{ width: 300 }}>
-              <ImageListItem key={article.id}>
-                <img src={`${preview}`} alt="img" loading="lazy" />
-              </ImageListItem>
-            </ImageList>
-          </Box>
 
           <Divider
             sx={{
@@ -124,15 +122,23 @@ const Article = () => {
             value={section2.text}
             onChange={(e) => setSection2({ ...section2, text: e.target.value })}
           />
-          <ButtonGroup variant="contained" color="primary">
-            <Button type="submit">Сохранить</Button>
-            <Button color="error" onClick={() => handleDelete(article.id)}>
+          <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
+            <Button color="primary" type="submit" variant="contained">
+              Сохранить
+            </Button>
+            <Button color="error" onClick={() => handleDelete(article.id)} variant="contained">
               Удалить
             </Button>
-            <Button color="secondary" component={Link} to={'https://fatalitystudio.netlify.app/blog/' + id} target="_blank">
-              Посмотреть на сайте
+            <Button
+              color="secondary"
+              component={Link}
+              to={'https://fatalitystudio.netlify.app/blog/' + id}
+              target="_blank"
+              variant="contained"
+            >
+              На сайте
             </Button>
-          </ButtonGroup>
+          </Grid>
         </form>
       </Paper>
     </Grid>

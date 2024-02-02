@@ -26,8 +26,9 @@ import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
 // assets
-import avatar1 from 'assets/images/users/avatar-1.png';
+import avatar1 from 'assets/images/users/avatar-2.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -55,6 +56,7 @@ function a11yProps(index) {
 
 const Profile = () => {
   const theme = useTheme();
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = async () => {
     // logout
@@ -98,7 +100,7 @@ const Profile = () => {
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">Sula</Typography>
+          <Typography variant="subtitle1">{user?.name}</Typography>
         </Stack>
       </ButtonBase>
       <Popper

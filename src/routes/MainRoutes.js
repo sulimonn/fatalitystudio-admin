@@ -11,6 +11,12 @@ const CRM = Loadable(lazy(() => import('pages/requests/CRM')));
 const Delivery = Loadable(lazy(() => import('pages/requests/Delivery')));
 const Design = Loadable(lazy(() => import('pages/requests/Design')));
 const Seo = Loadable(lazy(() => import('pages/requests/Seo')));
+const PortfolioApplications = Loadable(lazy(() => import('pages/portfolio/Application')));
+const PortfolioWebPages = Loadable(lazy(() => import('pages/portfolio/WebPages')));
+const PortfolioCRM = Loadable(lazy(() => import('pages/portfolio/Crm')));
+const PortfolioDelivery = Loadable(lazy(() => import('pages/portfolio/Delivery')));
+const PortfolioDesign = Loadable(lazy(() => import('pages/portfolio/Design')));
+const PortfolioSeo = Loadable(lazy(() => import('pages/portfolio/Seo')));
 const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
 const Article = Loadable(lazy(() => import('pages/blog/Article')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
@@ -75,6 +81,35 @@ const MainRoutes = {
     {
       path: 'team',
       element: <Team />
+    },
+    {
+      path: 'potrfolio',
+      children: [
+        {
+          path: 'applications',
+          element: <PortfolioApplications />
+        },
+        {
+          path: 'webpages',
+          element: <PortfolioWebPages />
+        },
+        {
+          path: 'crm',
+          element: <PortfolioCRM />
+        },
+        {
+          path: 'development-delivery',
+          element: <PortfolioDelivery />
+        },
+        {
+          path: 'design',
+          element: <PortfolioDesign />
+        },
+        {
+          path: 'seo',
+          element: <PortfolioSeo />
+        }
+      ]
     }
   ]
 };
