@@ -6,47 +6,25 @@ import InputFileUpload from 'components/@extended/InputFile';
 import { removePost, updatePost } from 'store/reducers/blog';
 
 const Article = () => {
-  const { id } = useParams();
-  const pathname = useLocation().pathname;
-  const isNew = pathname.endsWith('/new');
-  const navigate = useNavigate();
-  let article = useSelector((state) => state.blog.posts.find((post) => post.id == id));
-  article = isNew
-    ? {
-        src: '',
-        title: '',
-        text: '',
-        date: '',
-        head: {
-          text: '',
-          src: ''
-        },
-        section1: {
-          title: '',
-          text: ''
-        },
-        big: '',
-        section2: {
-          title: '',
-          text: ''
-        },
-        authorId: 4
-      }
-    : article;
-  const [title, setTitle] = useState(article.title);
-  const [content, setContent] = useState(article.head.text);
-  const [section1, setSection1] = useState(article.section1);
-  const [section2, setSection2] = useState(article.section2);
-  const [file, setFile] = useState();
-  const [preview, setPreview] = useState(isNew ? null : require(`assets/images/blog/${article.src}`));
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams() || undefined;
+  const isNew = useLocation().pathname.endsWith('/new');
+
+  const [article, setArticle] = useState(useSelector((state) => state.blog.posts.find((post) => post.id == id)) || {});
+  console.log(article);
+  const [cover, setCover] = useState(isNew ? {} : require('assets/images/blog/' + article.cover));
+  const [coverPreview, setCoverPreview] = useState(isNew ? {} : require('assets/images/blog/' + article.cover));
+  const [photo, setPhoto] = useState(isNew ? {} : require('assets/images/blog/' + article.head.src));
+  const [photoPreview, setPhotoPreview] = useState(isNew ? {} : require('assets/images/blog/' + article.head.src));
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updatePost({ id: article.id, title: title, content, preview, section1, section2 }));
+    dispatch(updatePost(article));
     navigate('/blog');
     alert('Post updated successfully');
   };
+
   const handleDelete = (id) => {
     const confirmed = window.confirm('Are you sure you want to delete this post?');
     if (confirmed) {
@@ -55,6 +33,7 @@ const Article = () => {
       alert('Post deleted successfully');
     }
   };
+
   return (
     <Grid item xs={10} sm={8} md={6}>
       <Paper elevation={3} style={{ padding: 20, bgImage: 'none' }}>
@@ -63,13 +42,13 @@ const Article = () => {
         </Typography>
         <form onSubmit={handleSubmit} method="post">
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {(!isNew || preview) && (
-              <Box cols={1} height={100} width="300" borderRadius={2}>
-                <img src={preview} alt="img" loading="lazy" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+            {(!isNew || coverPreview) && (
+              <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
+                <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setPreview} file={file} setFile={setFile}>
+              <InputFileUpload setPreview={setCoverPreview} file={cover} setFile={setCover}>
                 Загрузить обложку
               </InputFileUpload>
             </Box>
@@ -80,8 +59,8 @@ const Article = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={article.title}
+            onChange={(e) => setArticle({ ...article, title: e.target.value })}
           />
           <TextField
             required
@@ -90,10 +69,23 @@ const Article = () => {
             fullWidth
             margin="normal"
             multiline
-            rows={4}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            rows={1}
+            value={article.text}
+            onChange={(e) => setArticle({ ...article, text: e.target.value })}
           />
+
+          <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+            {(!isNew || photoPreview) && (
+              <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
+                <img src={photoPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
+              </Box>
+            )}
+            <Box display="flex" justifyContent="center">
+              <InputFileUpload setPreview={setPhotoPreview} file={photo} setFile={setPhoto}>
+                Загрузить фото
+              </InputFileUpload>
+            </Box>
+          </Box>
 
           <Divider
             sx={{
@@ -110,8 +102,8 @@ const Article = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={section1.title}
-            onChange={(e) => setSection1({ ...section1, title: e.target.value })}
+            value={article.section1.title}
+            onChange={(e) => setArticle({ ...article, section1: { ...article.section1, title: e.target.value } })}
           />
           <TextField
             label="Content"
@@ -120,8 +112,8 @@ const Article = () => {
             margin="normal"
             multiline
             rows={4}
-            value={section1.text}
-            onChange={(e) => setSection1({ ...section1, text: e.target.value })}
+            value={article.section1.text}
+            onChange={(e) => setArticle({ ...article, section1: { ...section1, text: e.target.value } })}
           />
           <Divider
             sx={{
@@ -138,8 +130,8 @@ const Article = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={section2.title}
-            onChange={(e) => setSection2({ ...section2, title: e.target.value })}
+            value={article.section2.title}
+            onChange={(e) => setArticle({ ...article, section2: { ...article.section2, title: e.target.value } })}
           />
           <TextField
             label="Content"
@@ -148,12 +140,12 @@ const Article = () => {
             margin="normal"
             multiline
             rows={4}
-            value={section2.text}
-            onChange={(e) => setSection2({ ...section2, text: e.target.value })}
+            value={article.section2.text}
+            onChange={(e) => setArticle({ ...article, section2: { ...section2, text: e.target.value } })}
           />
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
             <Button color="primary" type="submit" variant="contained">
-              Сохранить
+              {isNew ? 'Добавить статью' : 'Сохранить'}
             </Button>
             {!isNew && (
               <>

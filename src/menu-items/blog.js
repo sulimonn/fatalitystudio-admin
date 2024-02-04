@@ -15,7 +15,7 @@ const blog = {
   children: [
     {
       id: 'blog',
-      title: 'Блоги',
+      title: 'Блог',
       type: 'item',
       url: '/blog',
       icon: icons.BlogIcon

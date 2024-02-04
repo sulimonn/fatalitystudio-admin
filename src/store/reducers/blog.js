@@ -6,7 +6,7 @@ const blogSlice = createSlice({
     posts: [
       {
         id: 1,
-        src: 'articleblue.png',
+        cover: 'articleblue.png',
         title: 'Цифровая Эволюция: Как Технологии Меняют Мир',
         text: 'Обзор изменений, внесенных IT-технологиями в разные аспекты нашей жизни.',
         date: '05.06.23',
@@ -27,7 +27,7 @@ const blogSlice = createSlice({
       },
       {
         id: 2,
-        src: 'articlegreen.png',
+        cover: 'articlegreen.png',
         title: 'Роботы и Автоматизация: Как Технологии Меняют Рабочий Мир',
         text: 'Обзор изменений, внесенных IT-технологиями в разные аспекты нашей жизни.',
         date: '05.06.23',

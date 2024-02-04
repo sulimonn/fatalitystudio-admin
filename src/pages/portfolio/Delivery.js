@@ -1,7 +1,8 @@
 import React from 'react';
+import PortfolioBase from './PortfolioBase';
 
 const Delivery = () => {
-  return <div></div>;
+  return <PortfolioBase type="delivery" title="Разработка агрегаторов доставки" />;
 };
 
 export default Delivery;

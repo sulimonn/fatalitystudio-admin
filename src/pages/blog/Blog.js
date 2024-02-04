@@ -49,7 +49,7 @@ const Blog = () => {
               >
                 <img
                   style={{ objectFit: 'cover', height: '100%', width: '100%' }}
-                  src={require(`assets/images/blog/${article.src}`)}
+                  src={require(`assets/images/blog/${article.cover}`)}
                   alt="img"
                   loading="lazy"
                 />

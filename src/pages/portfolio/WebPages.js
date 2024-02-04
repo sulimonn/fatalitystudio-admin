@@ -1,7 +1,8 @@
 import React from 'react';
+import PortfolioBase from './PortfolioBase';
 
 const WebPages = () => {
-  return <div></div>;
+  return <PortfolioBase type="website" title="Разработка сайтов" />;
 };
 
 export default WebPages;

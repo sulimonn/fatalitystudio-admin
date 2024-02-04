@@ -1,7 +1,8 @@
 import React from 'react';
+import PortfolioBase from './PortfolioBase';
 
 const Design = () => {
-  return <div></div>;
+  return <PortfolioBase type="design" title="Дизайн" />;
 };
 
 export default Design;

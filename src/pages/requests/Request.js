@@ -6,6 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Checkbox } from '@mui/material';
 
 import { reviewRequest } from 'store/reducers/requests';
+import Empty from 'pages/Empty';
 
 const Requests = ({ type }) => {
   const dispatch = useDispatch();
@@ -59,25 +60,29 @@ const Requests = ({ type }) => {
         width: '100%'
       }}
     >
-      <DataGrid
-        sx={{
-          '& .MuiDataGrid-cell': {
-            outline: 'none !important'
-          },
-          textDecoration: 'none !important'
-        }}
-        rows={appRequests}
-        columns={columns}
-        showCellVerticalBorder
-        showColumnVerticalBorder
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 }
-          }
-        }}
-        pageSizeOptions={[5, 10]}
-        disableRowSelectionOnClick
-      />
+      {appRequests.length !== 0 ? (
+        <DataGrid
+          sx={{
+            '& .MuiDataGrid-cell': {
+              outline: 'none !important'
+            },
+            textDecoration: 'none !important'
+          }}
+          rows={appRequests}
+          columns={columns}
+          showCellVerticalBorder
+          showColumnVerticalBorder
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 }
+            }
+          }}
+          pageSizeOptions={[5, 10]}
+          disableRowSelectionOnClick
+        />
+      ) : (
+        <Empty type={'request'} />
+      )}
     </div>
   );
 };

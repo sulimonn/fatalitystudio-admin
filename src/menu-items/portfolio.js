@@ -16,7 +16,7 @@ const icons = {
 
 const portfolio = {
   id: 'portfolio-application',
-  title: 'Протфолио',
+  title: 'Портфолио',
   type: 'group',
   children: [
     {
