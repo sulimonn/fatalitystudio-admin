@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { DataGrid } from '@mui/x-data-grid';
-import { Checkbox } from '@mui/material';
 
+// material-ui
+import { DataGrid } from '@mui/x-data-grid';
+import { Checkbox, Box, Typography } from '@mui/material';
+
+// project import
 import { reviewRequest } from 'store/reducers/requests';
 import Empty from 'pages/Empty';
+import { setTitle } from 'utils/titleHelper';
 
-const Requests = ({ type }) => {
+const Requests = ({ title, type }) => {
+  useEffect(() => {
+    setTitle(title);
+  }, [title]);
+
   const dispatch = useDispatch();
   const service = useSelector((state) => state.services.find((service) => service.type === type));
 
@@ -54,12 +62,15 @@ const Requests = ({ type }) => {
   };
 
   return (
-    <div
+    <Box
       style={{
         height: 400,
         width: '100%'
       }}
     >
+      <Box my={4}>
+        <Typography variant="h4">{title}</Typography>
+      </Box>
       {appRequests.length !== 0 ? (
         <DataGrid
           sx={{
@@ -83,11 +94,12 @@ const Requests = ({ type }) => {
       ) : (
         <Empty type={'request'} />
       )}
-    </div>
+    </Box>
   );
 };
 Requests.propTypes = {
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
+  title: PropTypes.string
 };
 
 export default Requests;

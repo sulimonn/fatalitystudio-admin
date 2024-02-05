@@ -18,7 +18,7 @@ const Empty = ({ type }) => {
         alt="Empty"
       />
       <Typography variant="h3" color="textSecondary">
-        Empty
+        Пусто
       </Typography>
     </Box>
   );

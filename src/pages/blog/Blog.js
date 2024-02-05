@@ -1,9 +1,14 @@
-import React from 'react';
-import { experimentalStyled as styled } from '@mui/material/styles';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+// material-ui
 import { Box, Typography, Button, Paper, Grid } from '@mui/material';
+import { experimentalStyled as styled } from '@mui/material/styles';
+
+// project import
 import { removePost } from 'store/reducers/blog';
+import { setTitle } from 'utils/titleHelper';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.grey[700],
@@ -20,6 +25,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Blog = () => {
+  useEffect(() => {
+    setTitle('Блог');
+  }, []);
+
   const dispatch = useDispatch();
   const articles = useSelector((state) => state.blog.posts);
   const handleDelete = (id) => {

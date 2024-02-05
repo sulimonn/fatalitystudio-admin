@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { setTitle } from 'utils/titleHelper';
 
 const Feedback = () => {
+  useEffect(() => {
+    setTitle('Отзывы');
+  }, []);
   return <div></div>;
 };
 

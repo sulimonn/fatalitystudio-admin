@@ -33,7 +33,7 @@ const portfolio = createSlice({
       title: 'Tippify',
       full: 'Сервис «Tippify»',
       bgColor: '#3C45BA',
-      type: 'service',
+      type: 'app',
       describe: 'Приложение-агрегатор ресторанов кавказской кухни, позволяет пользователям делать заказы блюд с доставкой и самовывозом',
       cover: 'tippify-phone.png',
       bg: 'Vector (1).svg',
@@ -51,7 +51,25 @@ const portfolio = createSlice({
       icon: 'geometry.svg'
     }
   ],
-  reducers: {}
+  reducers: {
+    addPortfolio: (state, action) => {
+      state.push(action.payload);
+    },
+    deletePortfolio: (state, action) => {
+      const index = state.findIndex((portfolio) => portfolio.id === action.payload);
+      if (index !== -1) {
+        state.splice(index, 1);
+      }
+    },
+    editPortfolio: (state, action) => {
+      const index = state.findIndex((portfolio) => portfolio.id === action.payload.id);
+      if (index !== -1) {
+        state[index] = action.payload;
+      }
+    }
+  }
 });
+
+export const { addPortfolio, deletePortfolio, editPortfolio } = portfolio.actions;
 
 export default portfolio.reducer;
