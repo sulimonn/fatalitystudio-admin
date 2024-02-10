@@ -1,15 +1,14 @@
 // project import
 import blog from './blog';
-import feedback from './feedback';
+import other from './other';
 import pages from './pages';
 import portfolio from './portfolio';
 import requests from './requests';
-import team from './team';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [requests, portfolio, blog, feedback, team, pages]
+  items: [requests, portfolio, blog, other, pages]
 };
 
 export default menuItems;

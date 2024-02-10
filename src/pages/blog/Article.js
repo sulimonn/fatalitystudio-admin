@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Grid, Paper, Box, Divider, Typography } from '@mui/material';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import InputFileUpload from 'components/@extended/InputFile';
 import { removePost, updatePost } from 'store/reducers/blog';
@@ -9,15 +9,47 @@ const Article = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams() || undefined;
-  const isNew = useLocation().pathname.endsWith('/new');
 
   const [article, setArticle] = useState(useSelector((state) => state.blog.posts.find((post) => post.id == id)) || {});
-  console.log(article);
-  const [cover, setCover] = useState(isNew ? {} : require('assets/images/blog/' + article.cover));
-  const [coverPreview, setCoverPreview] = useState(isNew ? {} : require('assets/images/blog/' + article.cover));
-  const [photo, setPhoto] = useState(isNew ? {} : require('assets/images/blog/' + article.head.src));
-  const [photoPreview, setPhotoPreview] = useState(isNew ? {} : require('assets/images/blog/' + article.head.src));
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
+  useEffect(() => {
+    if (id && article.cover) {
+      import(`assets/images/blog/${article.cover}`)
+        .then((image) => {
+          setCoverPreview(image.default);
+        })
+        .catch((error) => {
+          console.error('Error loading cover image:', error);
+        });
+    }
+    if (id && article.head && article.head.src) {
+      import(`assets/images/blog/${article.head.src}`)
+        .then((image) => {
+          setPhotoPreview(image.default);
+        })
+        .catch((error) => {
+          console.error('Error loading photo image:', error);
+        });
+    }
+  }, [id, article.cover, article.head]);
+
+  const setCover = (file) => {
+    setArticle({
+      ...article,
+      cover: file
+    });
+  };
+  const setPhoto = (file) => {
+    setArticle({
+      ...article,
+      head: {
+        ...article.head,
+        src: file
+      }
+    });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updatePost(article));
@@ -38,17 +70,17 @@ const Article = () => {
     <Grid item xs={10} sm={8} md={6}>
       <Paper elevation={3} style={{ padding: 20, bgImage: 'none' }}>
         <Typography variant="h3" sx={{ mb: 3 }}>
-          {isNew ? 'Добавить статью' : 'Изменить статью'}
+          {id ? 'Добавить статью' : 'Изменить статью'}
         </Typography>
         <form onSubmit={handleSubmit} method="post">
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {(!isNew || coverPreview) && (
+            {(!id || coverPreview) && (
               <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
                 <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setCoverPreview} file={cover} setFile={setCover}>
+              <InputFileUpload setPreview={setCoverPreview} setFile={setCover}>
                 Загрузить обложку
               </InputFileUpload>
             </Box>
@@ -75,13 +107,13 @@ const Article = () => {
           />
 
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {(!isNew || photoPreview) && (
+            {(!id || photoPreview) && (
               <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
                 <img src={photoPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setPhotoPreview} file={photo} setFile={setPhoto}>
+              <InputFileUpload setPreview={setPhotoPreview} setFile={setPhoto}>
                 Загрузить фото
               </InputFileUpload>
             </Box>
@@ -145,9 +177,9 @@ const Article = () => {
           />
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
             <Button color="primary" type="submit" variant="contained">
-              {isNew ? 'Добавить статью' : 'Сохранить'}
+              {id ? 'Добавить статью' : 'Сохранить'}
             </Button>
-            {!isNew && (
+            {!id && (
               <>
                 <Button sx={{ mx: 1 }} color="error" onClick={() => handleDelete(article.id)} variant="contained">
                   Удалить

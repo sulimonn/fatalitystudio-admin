@@ -19,13 +19,7 @@ const Requests = ({ title, type }) => {
 
   const dispatch = useDispatch();
   const service = useSelector((state) => state.services.find((service) => service.type === type));
-
-  const appRequests = useSelector((state) => state.requests.filter((request) => request.serviceId === service.id)).map((request) => {
-    return {
-      ...request,
-      serviceId: service.title
-    };
-  });
+  const requests = useSelector((state) => state.requests.filter((request) => request.serviceId === service.id));
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 20 },
@@ -36,12 +30,11 @@ const Requests = ({ title, type }) => {
       width: 160,
       sortable: false,
       renderCell: (params) => (
-        <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
+        <Link style={{ color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
           {params.row.phoneNumber}
         </Link>
       )
     },
-    { field: 'serviceId', headerName: 'Interested Service', width: 180 },
     {
       field: 'reviewed',
       headerName: 'Reviewed',
@@ -71,7 +64,7 @@ const Requests = ({ title, type }) => {
       <Box my={4}>
         <Typography variant="h4">{title}</Typography>
       </Box>
-      {appRequests.length !== 0 ? (
+      {requests.length !== 0 ? (
         <DataGrid
           sx={{
             '& .MuiDataGrid-cell': {
@@ -79,7 +72,7 @@ const Requests = ({ title, type }) => {
             },
             textDecoration: 'none !important'
           }}
-          rows={appRequests}
+          rows={requests}
           columns={columns}
           showCellVerticalBorder
           showColumnVerticalBorder

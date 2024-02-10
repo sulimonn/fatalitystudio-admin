@@ -21,6 +21,7 @@ const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
 const Article = Loadable(lazy(() => import('pages/blog/Article')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
 const Team = Loadable(lazy(() => import('pages/team/Team')));
+const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -84,7 +85,20 @@ const MainRoutes = {
     },
     {
       path: 'team',
-      element: <Team />
+      children: [
+        {
+          path: '',
+          element: <Team />
+        },
+        {
+          path: ':id',
+          element: <MemberForm />
+        },
+        {
+          path: 'new',
+          element: <MemberForm />
+        }
+      ]
     },
     {
       path: 'portfolio',

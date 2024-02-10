@@ -8,9 +8,10 @@ import requests from './requests';
 import services from './services';
 import portfolio from './portfolio';
 import authReducer from './actions';
+import team from './team';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
-const reducers = combineReducers({ menu, blog, services, requests, portfolio, auth: authReducer });
+const reducers = combineReducers({ menu, blog, services, requests, portfolio, team, auth: authReducer });
 
 export default reducers;
