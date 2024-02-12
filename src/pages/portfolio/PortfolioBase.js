@@ -19,7 +19,7 @@ const PortfolioBase = ({ type, title }) => {
 
   const dispatch = useDispatch();
   // Select portfolios from Redux store filtered by type
-  const portfolioList = useSelector((state) => state.portfolio.filter((portfolio) => portfolio.type === type));
+  const portfolioList = useSelector((state) => state.portfolio.projects.filter((portfolio) => portfolio.type === type));
 
   // Handle delete portfolio action
   const handleDelete = (id) => {

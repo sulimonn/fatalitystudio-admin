@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // project imports
 import { addMember } from 'store/reducers/team';
@@ -11,13 +11,14 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 
 const MemberForm = () => {
   const { id } = useParams();
-
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const member = useSelector((state) => state.team.members.find((member) => member.id.toString() === id));
-  const [memberData, setMemberData] = useState(member || {});
+  const [memberData, setMemberData] = useState(member || { avatar: null });
   const [avatarPreview, setAvatarPreview] = useState(null);
   useEffect(() => {
-    if (id && member.avatar) {
+    if (id && member) {
       import(`assets/images/users/${member.avatar}`)
         .then((image) => {
           setAvatarPreview(image.default);
@@ -26,12 +27,13 @@ const MemberForm = () => {
           console.error('Error loading cover image:', error);
         });
     }
-  }, [id, member.avatar]);
+  }, [id, member]);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setMemberData({
       ...memberData,
-      [name]: value
+      [name]: value,
+      id: id || Math.random().toFixed(20)
     });
   };
 
@@ -53,6 +55,7 @@ const MemberForm = () => {
       avatar: null,
       password: ''
     });
+    navigate('/team');
   };
 
   return (

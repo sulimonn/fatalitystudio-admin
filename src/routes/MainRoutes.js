@@ -22,6 +22,7 @@ const Article = Loadable(lazy(() => import('pages/blog/Article')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
 const Team = Loadable(lazy(() => import('pages/team/Team')));
 const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
+const ServiceList = Loadable(lazy(() => import('pages/services/ServiceList')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -128,6 +129,10 @@ const MainRoutes = {
           element: <PortfolioSeo />
         }
       ]
+    },
+    {
+      path: 'services',
+      element: <ServiceList />
     }
   ]
 };

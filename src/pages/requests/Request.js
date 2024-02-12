@@ -19,7 +19,7 @@ const Requests = ({ title, type }) => {
 
   const dispatch = useDispatch();
   const service = useSelector((state) => state.services.find((service) => service.type === type));
-  const requests = useSelector((state) => state.requests.filter((request) => request.serviceId === service.id));
+  const requests = useSelector((state) => state.requests.requests.filter((request) => request.serviceId === service.id));
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 20 },
