@@ -25,7 +25,7 @@ root.render(
   <StrictMode>
     <ReduxProvider store={store}>
       <BrowserRouter basename="/admin">
-        <AuthenticatedComponent isLoggedIn={store.getState().auth.isLoggedIn}>
+        <AuthenticatedComponent isLoggedIn={false}>
           <App />
         </AuthenticatedComponent>
       </BrowserRouter>

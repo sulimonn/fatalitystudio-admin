@@ -10,7 +10,6 @@ const InputFileUpload = ({ setFile, children, setPreview }) => {
     }
     setFile(e.target.files[0]);
     const fileUrl = URL.createObjectURL(e.target.files[0]);
-    console.log(fileUrl);
     setPreview(fileUrl);
   };
 

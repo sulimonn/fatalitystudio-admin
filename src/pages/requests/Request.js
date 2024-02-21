@@ -8,30 +8,29 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Checkbox, Box, Typography } from '@mui/material';
 
 // project import
-import { reviewRequest } from 'store/reducers/requests';
+import { reviewRequest } from 'store/reducers/services';
 import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 
-const Requests = ({ title, type }) => {
+const Requests = ({ title, id }) => {
   useEffect(() => {
     setTitle(title);
   }, [title]);
 
   const dispatch = useDispatch();
-  const service = useSelector((state) => state.services.find((service) => service.type === type));
-  const requests = useSelector((state) => state.requests.requests.filter((request) => request.serviceId === service.id));
+  const requests = useSelector((state) => state.services.services.find((service) => service.id === id)).tasks || [];
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 20 },
     { field: 'name', headerName: 'Name', width: 160 },
     {
-      field: 'phoneNumber',
+      field: 'phone_number',
       headerName: 'Phone Number',
       width: 160,
       sortable: false,
       renderCell: (params) => (
-        <Link style={{ color: 'inherit' }} to={`tel:${params.row.phoneNumber}`}>
-          {params.row.phoneNumber}
+        <Link style={{ color: 'inherit' }} to={`tel:${params.row.phone_number}`}>
+          {params.row.phone_number}
         </Link>
       )
     },
@@ -64,7 +63,7 @@ const Requests = ({ title, type }) => {
       <Box my={4}>
         <Typography variant="h4">{title}</Typography>
       </Box>
-      {requests.length !== 0 ? (
+      {requests?.length !== 0 ? (
         <DataGrid
           sx={{
             '& .MuiDataGrid-cell': {
@@ -91,7 +90,7 @@ const Requests = ({ title, type }) => {
   );
 };
 Requests.propTypes = {
-  type: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   title: PropTypes.string
 };
 

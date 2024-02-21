@@ -1,7 +1,13 @@
 // types
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ==============================|| SLICE - PORTFOLIO ||============================== //
+
+export const fetchPortfolio = createAsyncThunk('portfolio/fetchPortfolio', async () => {
+  const response = await fetch('http://79.174.82.88:8000/api/project');
+  const data = await response.json();
+  return data;
+});
 
 const portfolio = createSlice({
   name: 'portfolio',
@@ -51,7 +57,9 @@ const portfolio = createSlice({
         bg: null,
         icon: 'geometry.svg'
       }
-    ]
+    ],
+    status: null,
+    error: null
   },
   reducers: {
     addPortfolio: (state, action) => {
@@ -69,6 +77,20 @@ const portfolio = createSlice({
         state[index] = action.payload;
       }
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPortfolio.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchPortfolio.fulfilled, (state, action) => {
+        state.status = 'fulfilled';
+        state.portfolio = action.payload;
+      })
+      .addCase(fetchPortfolio.rejected, (state, action) => {
+        state.status = 'rejected';
+        state.error = action.error;
+      });
   }
 });
 

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 // material-ui
@@ -7,8 +6,8 @@ import { Box, Typography, Button, Paper, Grid } from '@mui/material';
 import { experimentalStyled as styled } from '@mui/material/styles';
 
 // project import
-import { removePost } from 'store/reducers/blog';
 import { setTitle } from 'utils/titleHelper';
+import { useDeleteArticleMutation, useGetBlogQuery } from 'store/reducers/blogApi';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.grey[700],
@@ -25,16 +24,24 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Blog = () => {
+  const [deleteArticle] = useDeleteArticleMutation();
+  const response = useGetBlogQuery();
+
   useEffect(() => {
     setTitle('Блог');
-  }, []);
+    if (response.isError && !response.isLoading) {
+      response.refetch();
+    }
+  }, [response]);
 
-  const dispatch = useDispatch();
-  const articles = useSelector((state) => state.blog.posts);
-  const handleDelete = (id) => {
-    const confirmed = window.confirm('Are you sure you want to delete this post?');
+  const articles = response.data || [];
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this post?', id);
     if (confirmed) {
-      dispatch(removePost(id));
+      await deleteArticle(id);
+      response.refetch();
+      alert('Post deleted successfully');
     }
   };
   return (
@@ -56,12 +63,7 @@ const Blog = () => {
                 borderRadius={2}
                 overflow="hidden"
               >
-                <img
-                  style={{ objectFit: 'cover', height: '100%', width: '100%' }}
-                  src={require(`assets/images/blog/${article.cover}`)}
-                  alt="img"
-                  loading="lazy"
-                />
+                <img style={{ objectFit: 'cover', height: '100%', width: '100%' }} src={article.cover} alt="img" loading="lazy" />
               </Box>
               <Box
                 textAlign="left"
@@ -75,7 +77,7 @@ const Blog = () => {
                   <Typography variant="h4" color="textPrimary">
                     {article.title}
                   </Typography>
-                  <Typography variant="body1">{article.text}</Typography>
+                  <Typography variant="body1">{article.introduction}</Typography>
                 </Box>
 
                 <Box display="flex" justifyContent="flex-end" gap={2}>

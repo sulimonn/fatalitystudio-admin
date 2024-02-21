@@ -1,4 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+export const fetchServices = createAsyncThunk('services/fetchServices', async () => {
+  const response = await fetch('/api/service');
+  const data = await response.json();
+  return data;
+});
 
 const services = createSlice({
   name: 'services',
@@ -48,7 +54,19 @@ const services = createSlice({
       }
     ]
   },
-  reducers: {}
+  reducers: {
+    reviewRequest(state, action) {
+      const request = state.find((request) => request.id === action.payload);
+      state.find((request) => request.id === action.payload).reviewed = !request.reviewed;
+    }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchServices.fulfilled, (state, action) => {
+      state.services = action.payload;
+    });
+  }
 });
+
+export const { reviewRequest } = services.actions;
 
 export default services.reducer;

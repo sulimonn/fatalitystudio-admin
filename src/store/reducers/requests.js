@@ -10,36 +10,36 @@ const requests = createSlice({
       {
         id: '1',
         name: 'Сергей Чуваков',
-        phoneNumber: '+7 999 999 99 99',
-        serviceId: '1',
+        phone_number: '+7 999 999 99 99',
+        service_id: '1',
         reviewed: false
       },
       {
         id: '16',
         name: 'Евгений Овчинников',
-        phoneNumber: '+7 999 999 99 99',
-        serviceId: '1',
+        phone_number: '+7 999 999 99 99',
+        service_id: '1',
         reviewed: false
       },
       {
         id: '26',
         name: 'Елена Михайлова',
-        phoneNumber: '+7 999 999 99 99',
-        serviceId: '1',
+        phone_number: '+7 999 999 99 99',
+        service_id: '1',
         reviewed: true
       },
       {
         id: '2',
         name: 'Алексей Кириллов',
-        phoneNumber: '+7 999 999 99 99',
-        serviceId: '2',
+        phone_number: '+7 999 999 99 99',
+        service_id: '2',
         reviewed: false
       },
       {
         id: '3',
         name: 'Алексей Кириллов',
-        phoneNumber: '+7 999 999 99 99',
-        serviceId: '3',
+        phone_number: '+7 999 999 99 99',
+        service_id: '3',
         reviewed: true
       }
     ]

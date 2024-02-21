@@ -5,12 +5,15 @@ import { Box, List, ListItem, ListItemText } from '@mui/material';
 
 // project import
 import { setTitle } from 'utils/titleHelper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchServices } from 'store/reducers/services';
 
 const ServiceList = () => {
+  const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(fetchServices());
     setTitle('Сервисы');
-  });
+  }, [dispatch]);
 
   const services = useSelector((state) => state.services.services);
 
@@ -18,7 +21,7 @@ const ServiceList = () => {
     <Box>
       <List sx={{ width: 'fit-content' }}>
         {services.map((service) => (
-          <ListItem key={service.id} sx={{ backgroundColor: 'background.paper' }}>
+          <ListItem key={service.id} sx={{ backgroundColor: 'background.paper', p: 1, m: 1, borderRadius: 2 }}>
             <ListItemText primary={service.title} />
           </ListItem>
         ))}
