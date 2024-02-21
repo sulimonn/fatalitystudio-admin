@@ -8,7 +8,8 @@ export const login = createAsyncThunk('auth/login', async (userData, { rejectWit
     const config = {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      referrerPolicy: 'unsafe_url'
     };
     const response = await axios.post(`http://79.174.82.88:8000/api/auth/login`, JSON.stringify(userData), config);
     console.log(response);
@@ -37,7 +38,8 @@ export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (token
     }
     const response = await fetch(`http://79.174.82.88:8000/api/user`, {
       method: 'GET',
-      headers
+      headers,
+      referrerPolicy: 'unsafe_url'
     });
     const data = await response.json();
     return data;
