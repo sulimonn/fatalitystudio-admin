@@ -10,7 +10,7 @@ export const login = createAsyncThunk('auth/login', async (userData, { rejectWit
         'Content-Type': 'application/json'
       }
     };
-    const response = await axios.post(`/api/auth/login`, JSON.stringify(userData), config);
+    const response = await axios.post(`http://79.174.82.88:8000/api/auth/login`, JSON.stringify(userData), config);
     console.log(response);
     if (response && response.data) {
       const { data } = response;
@@ -35,7 +35,7 @@ export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (token
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
-    const response = await fetch(`/api/user`, {
+    const response = await fetch(`http://79.174.82.88:8000/api/user`, {
       method: 'GET',
       headers
     });
