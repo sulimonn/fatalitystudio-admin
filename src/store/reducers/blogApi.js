@@ -4,9 +4,10 @@ export const blogApi = createApi({
   reducerPath: 'blogApi',
   tagTypes: ['blog'],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://79.174.82.88:8000/api',
+    baseUrl: 'http://79.174.82.88/api',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
+      headers.set('Origin', 'http://fatalitystudio.ru');
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }
@@ -33,11 +34,13 @@ export const blogApi = createApi({
       invalidatesTags: ['blog']
     }),
     updateArticle: build.mutation({
-      query: (article) => ({
-        url: `/blog/${article.id}`,
-        method: 'PUT',
-        body: article
-      }),
+      query: ({ formData, id }) => {
+        return {
+          url: `/blog/${id}`,
+          method: 'PATCH',
+          body: formData
+        };
+      },
       invalidatesTags: ['blog']
     }),
 

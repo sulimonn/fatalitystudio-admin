@@ -17,12 +17,15 @@ const PortfolioCRM = Loadable(lazy(() => import('pages/portfolio/Crm')));
 const PortfolioDelivery = Loadable(lazy(() => import('pages/portfolio/Delivery')));
 const PortfolioDesign = Loadable(lazy(() => import('pages/portfolio/Design')));
 const PortfolioSeo = Loadable(lazy(() => import('pages/portfolio/Seo')));
+const AddProject = Loadable(lazy(() => import('pages/portfolio/AddProject')));
+const UpdateProject = Loadable(lazy(() => import('pages/portfolio/UpdateProject')));
 const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
 const Article = Loadable(lazy(() => import('pages/blog/Article')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
 const Team = Loadable(lazy(() => import('pages/team/Team')));
 const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
 const ServiceList = Loadable(lazy(() => import('pages/services/ServiceList')));
+const AddService = Loadable(lazy(() => import('pages/services/AddService')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -127,12 +130,33 @@ const MainRoutes = {
         {
           path: 'seo',
           element: <PortfolioSeo />
+        },
+        {
+          path: 'new',
+          element: <AddProject />
+        },
+        {
+          path: ':id',
+          element: <UpdateProject />
         }
       ]
     },
     {
       path: 'services',
-      element: <ServiceList />
+      children: [
+        {
+          path: '',
+          element: <ServiceList />
+        },
+        {
+          path: ':id',
+          element: <ServiceList />
+        },
+        {
+          path: 'new',
+          element: <AddService />
+        }
+      ]
     }
   ]
 };

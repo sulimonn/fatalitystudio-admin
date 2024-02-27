@@ -1,99 +1,66 @@
-// types
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// ==============================|| SLICE - PORTFOLIO ||============================== //
+// Create an API using createApi
+const portfolioApi = createApi({
+  reducerPath: 'portfolioApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://79.174.82.88/api/',
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().auth.token;
+      if (token) {
+        headers.set('Authorization', `Token ${token}`);
+      }
+      headers.set('Origin', 'http://fatalitystudio.ru');
 
-export const fetchPortfolio = createAsyncThunk('portfolio/fetchPortfolio', async () => {
-  const response = await fetch('http://79.174.82.88:8000/api/project');
-  const data = await response.json();
-  return data;
-});
-
-const portfolio = createSlice({
-  name: 'portfolio',
-  initialState: {
-    portfolio: [
-      {
-        id: 1,
-        title: 'Сытый горец',
-        bgColor: '#C21936',
-        full: 'Приложение «Сытый горец»',
-        type: 'app',
-        describe: 'Приложение-агрегатор ресторанов кавказской кухни, позволяет пользователям делать заказы блюд с доставкой и самовывозом',
-        cover: 'sytyygores.png',
-        bg: 'Group 4.png',
-        icon: 'icon.svg'
-      },
-      {
-        id: 2,
-        title: 'Цветы в метро',
-        full: 'Приложение «Цветы в метро»',
-        bgColor: '#E1868C',
-        type: 'app',
-        describe: 'Приложение-агрегатор ресторанов кавказской кухни, позволяет пользователям делать заказы блюд с доставкой и самовывозом',
-        cover: 'flowers-metro.png',
-        bg: 'front-view-of-fresh-delicate-rose 1.png',
-        icon: 'Union.svg'
-      },
-      {
-        id: 3,
-        title: 'Tippify',
-        full: 'Сервис «Tippify»',
-        bgColor: '#3C45BA',
-        type: 'app',
-        describe: 'Приложение-агрегатор ресторанов кавказской кухни, позволяет пользователям делать заказы блюд с доставкой и самовывозом',
-        cover: 'tippify-phone.png',
-        bg: 'Vector (1).svg',
-        icon: 'Tippify.png'
-      },
-      {
-        id: 4,
-        title: 'Начертательная геометрия',
-        full: 'Сайт «Начертательная геометрия»',
-        bgColor: '#007FB9',
-        type: 'website',
-        describe: 'Приложение-агрегатор ресторанов кавказской кухни, позволяет пользователям делать заказы блюд с доставкой и самовывозом',
-        cover: '239.png',
-        bg: null,
-        icon: 'geometry.svg'
-      }
-    ],
-    status: null,
-    error: null
-  },
-  reducers: {
-    addPortfolio: (state, action) => {
-      state.push(action.payload);
-    },
-    deletePortfolio: (state, action) => {
-      const index = state.findIndex((portfolio) => portfolio.id === action.payload);
-      if (index !== -1) {
-        state.splice(index, 1);
-      }
-    },
-    editPortfolio: (state, action) => {
-      const index = state.findIndex((portfolio) => portfolio.id === action.payload.id);
-      if (index !== -1) {
-        state[index] = action.payload;
-      }
+      return headers;
     }
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchPortfolio.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchPortfolio.fulfilled, (state, action) => {
-        state.status = 'fulfilled';
-        state.portfolio = action.payload;
-      })
-      .addCase(fetchPortfolio.rejected, (state, action) => {
-        state.status = 'rejected';
-        state.error = action.error;
-      });
-  }
+  }),
+  tagTypes: ['portfolio'],
+  endpoints: (builder) => ({
+    fetchPortfolio: builder.query({
+      query: () => 'project',
+      providesTags: ['portfolio']
+    }),
+    addPortfolio: builder.mutation({
+      query: (portfolioData) => ({
+        url: 'project',
+        method: 'POST',
+        body: portfolioData
+      }),
+      invalidatesTags: ['portfolio']
+    }),
+    editPortfolio: builder.mutation({
+      query: ({ id, project }) => ({
+        url: `project/${id}`,
+        method: 'PUT',
+        body: project
+      }),
+
+      invalidatesTags: ['portfolio']
+    }),
+    deletePortfolio: builder.mutation({
+      query: (id) => ({
+        url: `project/${id}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['portfolio']
+    }),
+
+    getPortfolio: builder.query({
+      query: (id) => `project/${id}`,
+      providesTags: ['portfolio']
+    })
+  })
 });
 
-export const { addPortfolio, deletePortfolio, editPortfolio } = portfolio.actions;
+// Export hooks for usage in components
+export const {
+  useFetchPortfolioQuery,
+  useAddPortfolioMutation,
+  useEditPortfolioMutation,
+  useDeletePortfolioMutation,
+  useGetPortfolioQuery
+} = portfolioApi;
 
-export default portfolio.reducer;
+// Export the reducer, actions, and middleware for Redux store configuration
+export default portfolioApi;

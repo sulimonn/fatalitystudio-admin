@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 // Material-UI components
@@ -9,23 +8,28 @@ import { Grid, Box, Typography, Button } from '@mui/material';
 // Project imports
 import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
-import { deletePortfolio } from 'store/reducers/portfolio';
+import { useDeletePortfolioMutation, useFetchPortfolioQuery } from 'store/reducers/portfolio';
 
-const PortfolioBase = ({ type, title }) => {
+const PortfolioBase = ({ title }) => {
   // Update the document title when the component mounts or the title changes
   useEffect(() => {
     setTitle(title);
   }, [title]);
 
-  const dispatch = useDispatch();
-  // Select portfolios from Redux store filtered by type
-  const portfolioList = useSelector((state) => state.portfolio.projects.filter((portfolio) => portfolio.type === type));
+  const response = useFetchPortfolioQuery();
+  useEffect(() => {
+    if (response.isError) {
+      response.refetch();
+    }
+  }, [response]);
+  const portfolioList = response.data || [];
 
+  const [deletePortfolio] = useDeletePortfolioMutation();
   // Handle delete portfolio action
   const handleDelete = (id) => {
     const confirmed = window.confirm('Are you sure you want to delete this portfolio?');
     if (confirmed) {
-      dispatch(deletePortfolio(id));
+      deletePortfolio(id);
     }
   };
 
@@ -58,12 +62,14 @@ const PortfolioBase = ({ type, title }) => {
                   borderRadius={2}
                   overflow="hidden"
                 >
-                  <img
-                    loading="lazy"
-                    style={{ objectFit: 'contain', height: 'auto', width: '100%' }}
-                    src={require(`assets/images/portfolio/${portfolio.cover}`)}
-                    alt={portfolio.title}
-                  />
+                  {portfolio.cover && (
+                    <img
+                      loading="lazy"
+                      style={{ objectFit: 'contain', height: 'auto', width: '100%' }}
+                      src={portfolio.cover}
+                      alt={portfolio.title}
+                    />
+                  )}
                 </Box>
                 {/* Portfolio Details */}
                 <Box mt={2} gap={1} display="flex" flexDirection="column" justifyContent="space-between">
@@ -75,7 +81,7 @@ const PortfolioBase = ({ type, title }) => {
                   {/* Action Buttons */}
                   <Box display="flex" gap={1} justifyContent="flex-end">
                     {/* Edit Button */}
-                    <Button variant="contained" size="small" color="primary">
+                    <Button variant="contained" size="small" color="primary" component={Link} to={`/portfolio/${portfolio.id}`}>
                       Изменить
                     </Button>
                     {/* Delete Button */}

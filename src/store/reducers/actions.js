@@ -4,15 +4,12 @@ import axios from 'axios';
 
 export const login = createAsyncThunk('auth/login', async (userData, { rejectWithValue }) => {
   try {
-    // configure header's Content-Type as JSON
     const config = {
       headers: {
         'Content-Type': 'application/json'
-      },
-      referrerPolicy: 'unsafe_url'
+      }
     };
-    const response = await axios.post(`http://79.174.82.88:8000/api/auth/login`, JSON.stringify(userData), config);
-    console.log(response);
+    const response = await axios.post(`http://79.174.82.88/api/auth/login`, JSON.stringify(userData), config);
     if (response && response.data) {
       const { data } = response;
       localStorage.setItem('userToken', data.token);
@@ -21,34 +18,52 @@ export const login = createAsyncThunk('auth/login', async (userData, { rejectWit
       return rejectWithValue('Invalid response from server');
     }
   } catch (error) {
-    // return custom error message from API if any
-    if (error.response && error.response.data.message) {
-      return rejectWithValue(error.response.data.message);
-    } else {
-      return rejectWithValue(error.message);
+    return rejectWithValue(error.message);
+  }
+});
+
+export const getUsers = createAsyncThunk('auth/getUsers', async (token, { rejectWithValue }) => {
+  try {
+    token = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
     }
+    const response = await axios.get('http://79.174.82.88/api/users', {
+      'Content-Type': 'application/json',
+      headers
+    });
+    if (response.status !== 200) {
+      return rejectWithValue('Invalid response from server');
+    }
+    const { data } = await response;
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.message);
   }
 });
 
 export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (token, { rejectWithValue }) => {
   try {
+    token = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
     const headers = {};
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
-    const response = await fetch(`http://79.174.82.88:8000/api/user`, {
-      method: 'GET',
-      headers,
-      referrerPolicy: 'unsafe_url'
+    const response = await axios.get('http://79.174.82.88/api/user', {
+      'Content-Type': 'application/json',
+      headers
     });
-    const data = await response.json();
+    if (response.status !== 200) {
+      return rejectWithValue('Invalid response from server');
+    }
+    const { data } = await response;
     return data;
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(error.message);
   }
 });
 
-// initialize userToken from local storage
 const token = localStorage.getItem('userToken') ? localStorage.getItem('userToken') : null;
 
 const initialState = {
@@ -64,6 +79,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, { payload }) => {
+      console.log(payload);
       state.user = payload.user;
       state.token = payload.token;
     },
@@ -83,6 +99,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, { payload }) => {
         loginSuccess({ payload });
         state.loading = false;
+        state.user = payload.user;
+        state.token = payload.token;
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.loading = false;
@@ -100,7 +118,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
-    // Add other reducers here...
   }
 });
 

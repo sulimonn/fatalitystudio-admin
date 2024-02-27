@@ -60,11 +60,12 @@ const AuthLogin = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await dispatch(login(values));
+            const response = await dispatch(login(values));
             setStatus({ success: false });
             setSubmitting(false);
-            navigate('/');
-            console.log(2);
+            if (!response.error) {
+              navigate('/', { replace: true });
+            }
           } catch (err) {
             setStatus({ success: false });
             setErrors({ submit: err.message });

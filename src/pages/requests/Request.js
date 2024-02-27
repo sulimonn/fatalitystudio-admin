@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { DataGrid } from '@mui/x-data-grid';
-import { Checkbox, Box, Typography } from '@mui/material';
+import { Checkbox, Box, Typography, Button } from '@mui/material';
 
 // project import
-import { reviewRequest } from 'store/reducers/services';
+import { useDeleteTaskMutation, useFetchServicesQuery, useReviewTaskMutation } from 'store/reducers/services';
 import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 
@@ -17,8 +16,22 @@ const Requests = ({ title, id }) => {
     setTitle(title);
   }, [title]);
 
-  const dispatch = useDispatch();
-  const requests = useSelector((state) => state.services.services.find((service) => service.id === id)).tasks || [];
+  const services = useFetchServicesQuery().data || [];
+  const requests =
+    services
+      .find((service) => service.id.toString() === id)
+      ?.tasks.map((task) => ({
+        ...JSON.parse(task)
+      })) || [];
+
+  const [deleteRequest] = useDeleteTaskMutation();
+  const [reviewRequest] = useReviewTaskMutation();
+  const handleDelete = async (id) => {
+    await deleteRequest(id);
+  };
+  const handleReview = async (id) => {
+    await reviewRequest(id);
+  };
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 20 },
@@ -39,20 +52,24 @@ const Requests = ({ title, id }) => {
       headerName: 'Reviewed',
       width: 80,
       renderCell: (params) => (
-        <>
-          <Checkbox
-            checked={params.row.reviewed}
-            sx={{ outline: 'none !important', mx: 'auto' }}
-            onClick={() => handleReview(params.row.id)}
-          />
-        </>
+        <Checkbox
+          checked={params.row.reviewed}
+          sx={{ outline: 'none !important', mx: 'auto' }}
+          onClick={() => handleReview(params.row.id)}
+        />
+      )
+    },
+    {
+      field: 'service_id',
+      headerName: '',
+      width: 80,
+      renderCell: (params) => (
+        <Button variant="outlined" size="small" onClick={() => handleDelete(params.row.id)}>
+          Удалить
+        </Button>
       )
     }
   ];
-  const handleReview = (id) => {
-    dispatch(reviewRequest(id));
-  };
-
   return (
     <Box
       style={{

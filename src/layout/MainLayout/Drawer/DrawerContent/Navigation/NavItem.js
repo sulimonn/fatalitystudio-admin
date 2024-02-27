@@ -18,6 +18,9 @@ const NavItem = ({ item, level }) => {
   const { pathname } = useLocation();
 
   const { drawerOpen, openItem } = useSelector((state) => state.menu);
+  useEffect(() => {
+    localStorage.setItem('openItem', JSON.stringify(openItem));
+  }, [openItem]);
 
   let itemTarget = '_self';
   if (item.target) {

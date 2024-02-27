@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
 // material-ui
@@ -7,6 +7,7 @@ import { TextField, Button, Grid, Paper, Box, Divider, Typography, InputLabel, M
 // project import
 import InputFileUpload from 'components/@extended/InputFile';
 import { useAddArticleMutation, useDeleteArticleMutation, useGetArticleQuery, useUpdateArticleMutation } from 'store/reducers/blogApi';
+import { getUsers } from 'store/reducers/actions';
 
 const Article = () => {
   const navigate = useNavigate();
@@ -14,11 +15,21 @@ const Article = () => {
   const [addArticle, addRes] = useAddArticleMutation();
   const [deleteArticle, deleteRes] = useDeleteArticleMutation();
   const [updateArticle, updateRes] = useUpdateArticleMutation();
+  const { data } = useGetArticleQuery(id);
 
-  const [article, setArticle] = useState(useGetArticleQuery(id).data || {});
+  const [article, setArticle] = useState({});
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
-  const [coverPreview, setCoverPreview] = useState(id ? article.cover : null);
-  const [photoPreview, setPhotoPreview] = useState(id ? article.photo : null);
+  const { data: authors = [] } = getUsers();
+
+  useEffect(() => {
+    if (data) {
+      setArticle(data);
+      setCoverPreview(data.cover);
+      setPhotoPreview(data.photo);
+    }
+  }, [data]);
 
   const setCover = (file) => {
     setArticle((prevArticle) => ({
@@ -40,22 +51,33 @@ const Article = () => {
       const formData = new FormData();
 
       Object.entries(article).forEach(([key, value]) => {
-        if (value instanceof File) {
-          formData.append(key, value);
+        if (id) {
+          if (article[key] !== data[key])
+            if (value instanceof File) {
+              formData.append(key, value);
+            } else {
+              formData.append(key, String(value));
+            }
         } else {
-          formData.append(key, String(value));
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else {
+            formData.append(key, String(value));
+          }
         }
       });
       if (id) {
-        await updateArticle(formData);
+        if (article.id) await updateArticle({ formData, id });
         if (!updateRes.isError) {
           navigate('/blog');
         } else alert('Error updating article');
       } else {
+        await addArticle(formData);
+
         if (!addRes.isError) {
+          lo;
           navigate('/blog');
         } else alert('Error adding article');
-        await addArticle(formData);
       }
     } catch (error) {
       console.error('Error adding article:', error);
@@ -82,7 +104,7 @@ const Article = () => {
         </Typography>
         <form onSubmit={handleSubmit} method="post">
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {(id || coverPreview) && (
+            {((id && coverPreview) || coverPreview) && (
               <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
                 <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
               </Box>
@@ -124,7 +146,7 @@ const Article = () => {
           />
 
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {(id || photoPreview) && (
+            {((id && photoPreview) || photoPreview) && (
               <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
                 <img src={photoPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
               </Box>
@@ -201,10 +223,18 @@ const Article = () => {
           />
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-simple-select-helper-label">Автор</InputLabel>
-            <Select labelId="demo-simple-select-helper-label" id="demo-simple-select-helper" label="Автор">
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+            <Select
+              labelId="demo-simple-select-helper-label"
+              id="author"
+              label="Автор"
+              value={article.author || 1}
+              onChange={(e) => setArticle({ ...article, author: e.target.value })}
+            >
+              {authors.map((author) => (
+                <MenuItem key={author.id} value={author.id}>
+                  {author.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>

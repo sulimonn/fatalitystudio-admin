@@ -46,6 +46,9 @@ const Blog = () => {
   };
   return (
     <>
+      <Box my={4}>
+        <Typography variant="h4">Блог</Typography>
+      </Box>
       <Box display="flex" justifyContent="flex-end">
         <Button component={Link} to="/blog/new" variant="contained" color="primary" style={{ marginBottom: 20 }}>
           Добавить статью
