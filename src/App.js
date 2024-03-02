@@ -2,15 +2,18 @@
 import Routes from 'routes';
 import ThemeCustomization from 'themes';
 import ScrollTop from 'components/ScrollTop';
+import AuthenticatedComponent from 'components/AuthenticatedComponent';
 
 // ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
 const App = () => {
   return (
     <ThemeCustomization>
-      <ScrollTop>
-        <Routes />
-      </ScrollTop>
+      <AuthenticatedComponent>
+        <ScrollTop>
+          <Routes />
+        </ScrollTop>
+      </AuthenticatedComponent>
     </ThemeCustomization>
   );
 };

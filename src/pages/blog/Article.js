@@ -75,7 +75,6 @@ const Article = () => {
         await addArticle(formData);
 
         if (!addRes.isError) {
-          lo;
           navigate('/blog');
         } else alert('Error adding article');
       }

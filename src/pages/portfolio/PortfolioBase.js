@@ -22,7 +22,7 @@ const PortfolioBase = ({ title }) => {
       response.refetch();
     }
   }, [response]);
-  const portfolioList = response.data || [];
+  const { data: portfolioList = [] } = response;
 
   const [deletePortfolio] = useDeletePortfolioMutation();
   // Handle delete portfolio action
@@ -42,7 +42,7 @@ const PortfolioBase = ({ title }) => {
       {/* Add Portfolio */}
       <Box display="flex" justifyContent="flex-end">
         <Button component={Link} to="/portfolio/new" variant="contained" color="primary" style={{ marginBottom: 20 }}>
-          Добавить портфолио
+          Добавить проект
         </Button>
       </Box>
       {/* Portfolio Grid */}

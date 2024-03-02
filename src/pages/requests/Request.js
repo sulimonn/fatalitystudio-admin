@@ -19,7 +19,7 @@ const Requests = ({ title, id }) => {
   const services = useFetchServicesQuery().data || [];
   const requests =
     services
-      .find((service) => service.id.toString() === id)
+      .find((service) => service.id === id)
       ?.tasks.map((task) => ({
         ...JSON.parse(task)
       })) || [];
@@ -107,7 +107,7 @@ const Requests = ({ title, id }) => {
   );
 };
 Requests.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number,
   title: PropTypes.string
 };
 

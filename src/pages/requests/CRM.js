@@ -1,8 +1,10 @@
 import React from 'react';
 import Requests from './Request';
+import { useServiceId } from 'utils/useServiceId';
 
 const CRM = () => {
-  return <Requests title="CRM системы" id="3" />;
+  const id = useServiceId('crm');
+  return <Requests title="CRM системы" id={id} />;
 };
 
 export default CRM;
