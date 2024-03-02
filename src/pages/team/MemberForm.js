@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -16,18 +16,8 @@ const MemberForm = () => {
 
   const member = useSelector((state) => state.team.members.find((member) => member.id.toString() === id));
   const [memberData, setMemberData] = useState(member || { avatar: null });
-  const [avatarPreview, setAvatarPreview] = useState(null);
-  useEffect(() => {
-    if (id && member) {
-      import(`assets/images/users/${member.avatar}`)
-        .then((image) => {
-          setAvatarPreview(image.default);
-        })
-        .catch((error) => {
-          console.error('Error loading cover image:', error);
-        });
-    }
-  }, [id, member]);
+  const [avatarPreview, setAvatarPreview] = useState(member?.avatar);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setMemberData({
@@ -112,6 +102,17 @@ const MemberForm = () => {
           variant="outlined"
           name="position"
           value={memberData.position}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          label="Username"
+          variant="outlined"
+          type="text"
+          name="username"
+          value={memberData.username}
           onChange={handleChange}
           fullWidth
           margin="normal"

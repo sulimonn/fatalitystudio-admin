@@ -31,7 +31,7 @@ const AuthenticatedComponent = ({ children }) => {
         <Typography color="primary" variant="h4">
           {errorMessage || 'Что-то пошло не так'}
         </Typography>
-        <Typography variant={{ sm: 'subtitle1', xs: 'subtitle2' }}>
+        <Typography variant="subtitle1">
           Попробуйте{' '}
           <a
             style={{ textDecoration: 'underline', cursor: 'pointer' }}

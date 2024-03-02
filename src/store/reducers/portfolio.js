@@ -18,7 +18,7 @@ const portfolioApi = createApi({
   tagTypes: ['portfolio'],
   endpoints: (builder) => ({
     fetchPortfolio: builder.query({
-      query: () => 'project',
+      query: (id) => 'project' + (id ? `?service_id=${id}` : ''),
       providesTags: ['portfolio']
     }),
     addPortfolio: builder.mutation({

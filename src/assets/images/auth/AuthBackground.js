@@ -7,12 +7,10 @@ const AuthBackground = () => {
   return (
     <Box sx={{ position: 'absolute', filter: 'blur(18px)', zIndex: -1, bottom: 0 }}>
       <svg
-        width="1480"
-        height="655"
         viewBox="0 0 1480 655"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ transform: 'translateX(-300px)' }}
+        style={{ transform: 'translateX(-20%) translateY(9%)', height: '100vw', width: '100vw' }}
       >
         <ellipse cx="740" cy="678.5" rx="740" ry="678.5" fill="url(#paint0_radial_387_3285)" fillOpacity="0.4" />
         <defs>

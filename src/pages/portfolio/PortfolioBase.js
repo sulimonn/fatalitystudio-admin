@@ -10,19 +10,18 @@ import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 import { useDeletePortfolioMutation, useFetchPortfolioQuery } from 'store/reducers/portfolio';
 
-const PortfolioBase = ({ title }) => {
+const PortfolioBase = ({ title, serviceId }) => {
   // Update the document title when the component mounts or the title changes
   useEffect(() => {
     setTitle(title);
   }, [title]);
 
-  const response = useFetchPortfolioQuery();
+  const { data: portfolioList = [], isError, refetch } = useFetchPortfolioQuery(serviceId);
   useEffect(() => {
-    if (response.isError) {
-      response.refetch();
+    if (isError) {
+      refetch();
     }
-  }, [response]);
-  const { data: portfolioList = [] } = response;
+  }, [isError, refetch]);
 
   const [deletePortfolio] = useDeletePortfolioMutation();
   // Handle delete portfolio action
@@ -113,7 +112,7 @@ const PortfolioBase = ({ title }) => {
 
 // Prop types validation
 PortfolioBase.propTypes = {
-  type: PropTypes.string.isRequired,
+  serviceId: PropTypes.number,
   title: PropTypes.string
 };
 

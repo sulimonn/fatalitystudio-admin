@@ -1,8 +1,9 @@
 import React from 'react';
 import PortfolioBase from './PortfolioBase';
+import { useServiceId } from 'utils/useServiceId';
 
 const Crm = () => {
-  return <PortfolioBase type="3" title="CRM системы" />;
+  return <PortfolioBase serviceId={useServiceId('crm')} title="CRM системы" />;
 };
 
 export default Crm;

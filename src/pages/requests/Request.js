@@ -7,7 +7,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Checkbox, Box, Typography, Button } from '@mui/material';
 
 // project import
-import { useDeleteTaskMutation, useFetchServicesQuery, useReviewTaskMutation } from 'store/reducers/services';
+import { useDeleteTaskMutation, useFetchTasksQuery, useReviewTaskMutation } from 'store/reducers/services';
 import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 
@@ -16,13 +16,7 @@ const Requests = ({ title, id }) => {
     setTitle(title);
   }, [title]);
 
-  const services = useFetchServicesQuery().data || [];
-  const requests =
-    services
-      .find((service) => service.id === id)
-      ?.tasks.map((task) => ({
-        ...JSON.parse(task)
-      })) || [];
+  const { data: requests = [] } = useFetchTasksQuery(id);
 
   const [deleteRequest] = useDeleteTaskMutation();
   const [reviewRequest] = useReviewTaskMutation();

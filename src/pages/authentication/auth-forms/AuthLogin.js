@@ -16,7 +16,8 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
-  Typography
+  Typography,
+  CircularProgress
 } from '@mui/material';
 
 // third party
@@ -60,13 +61,20 @@ const AuthLogin = () => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            const response = await dispatch(login(values));
+            const { error, payload } = await dispatch(login(values));
+
             setStatus({ success: false });
             setSubmitting(false);
-            if (!response.error) {
+            if (!error) {
               navigate('/', { replace: true });
+            } else if (payload?.non_field_errors) {
+              throw new Error(payload.non_field_errors[0]);
+            }
+            if (error) {
+              throw new Error('Something went wrong. Please try again.');
             }
           } catch (err) {
+            console.log(err);
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);
@@ -161,7 +169,7 @@ const AuthLogin = () => {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
+                    {isSubmitting ? <CircularProgress color="secondary" size={26} /> : 'Login'}
                   </Button>
                 </AnimateButton>
               </Grid>
