@@ -20,10 +20,12 @@ const PortfolioSeo = Loadable(lazy(() => import('pages/portfolio/Seo')));
 const AddProject = Loadable(lazy(() => import('pages/portfolio/AddProject')));
 const UpdateProject = Loadable(lazy(() => import('pages/portfolio/UpdateProject')));
 const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
-const Article = Loadable(lazy(() => import('pages/blog/Article')));
+const AddArticle = Loadable(lazy(() => import('pages/blog/AddArticle')));
+const UpdateArticle = Loadable(lazy(() => import('pages/blog/UpdateArticle')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
 const Team = Loadable(lazy(() => import('pages/team/Team')));
 const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
+const UpdateMember = Loadable(lazy(() => import('pages/team/UpdateMember')));
 const ServiceList = Loadable(lazy(() => import('pages/services/ServiceList')));
 const AddService = Loadable(lazy(() => import('pages/services/AddService')));
 
@@ -75,11 +77,11 @@ const MainRoutes = {
         },
         {
           path: ':id',
-          element: <Article />
+          element: <UpdateArticle />
         },
         {
           path: 'new',
-          element: <Article />
+          element: <AddArticle />
         }
       ]
     },
@@ -96,7 +98,7 @@ const MainRoutes = {
         },
         {
           path: ':id',
-          element: <MemberForm />
+          element: <UpdateMember />
         },
         {
           path: 'new',

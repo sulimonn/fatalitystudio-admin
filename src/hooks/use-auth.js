@@ -33,8 +33,7 @@ export function useAuth() {
         return;
       }
       const response = await dispatch(fetchUserInfo(token));
-
-      if (response.error) {
+      if (response.error && token) {
         setErrorMessage(response.payload);
         setIsAuth('error');
         return;

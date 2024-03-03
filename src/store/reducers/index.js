@@ -8,6 +8,7 @@ import services from './services';
 import portfolio from './portfolio';
 import auth from './actions';
 import team from './team';
+import reviewsApi from './reviews';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -16,7 +17,8 @@ const reducers = combineReducers({
   [blogApi.reducerPath]: blogApi.reducer,
   [services.reducerPath]: services.reducer,
   [portfolio.reducerPath]: portfolio.reducer,
-  team,
+  [team.reducerPath]: team.reducer,
+  [reviewsApi.reducerPath]: reviewsApi.reducer,
   auth
 });
 

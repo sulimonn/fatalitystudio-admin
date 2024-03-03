@@ -1,53 +1,61 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 // project imports
-import { addMember } from 'store/reducers/team';
 import InputFileUpload from 'components/@extended/InputFile';
+import { useAddMemberMutation, useUpdateMemberMutation } from 'store/reducers/team';
 
 // material-ui
 import { Box, Typography, TextField, Button } from '@mui/material';
+import Loader from 'components/Loader';
 
-const MemberForm = () => {
-  const { id } = useParams();
-  const dispatch = useDispatch();
+const MemberForm = ({ id = null, member = {} }) => {
   const navigate = useNavigate();
-
-  const member = useSelector((state) => state.team.members.find((member) => member.id.toString() === id));
-  const [memberData, setMemberData] = useState(member || { avatar: null });
+  const [addMember, addResponse] = useAddMemberMutation();
+  const [updateMember, updateResponse] = useUpdateMemberMutation();
+  const [memberData, setmemberData] = useState(member);
   const [avatarPreview, setAvatarPreview] = useState(member?.avatar);
+  useEffect(() => {
+    if (member?.avatar) {
+      setAvatarPreview(member?.avatar);
+    }
+  }, [member?.avatar]);
+  if (id && !member.id) {
+    return <Loader />;
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setMemberData({
+    setmemberData({
       ...memberData,
-      [name]: value,
-      id: id || Math.random().toFixed(20)
+      [name]: value
     });
   };
 
   const handleAvatarChange = (file) => {
-    setMemberData({
+    setmemberData({
       ...memberData,
       avatar: file
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    dispatch(addMember(memberData));
-    setMemberData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      position: '',
-      avatar: null,
-      password: ''
-    });
-    navigate('/team');
+    if (id) {
+      await updateMember({ ...memberData, id });
+      if (!updateResponse.error) {
+        return navigate('/team');
+      }
+      return alert('Error updating member');
+    } else {
+      await addMember(memberData);
+      if (!addResponse.error) {
+        return navigate('/team');
+      }
+      return alert('Error adding member');
+    }
   };
-
   return (
     <Box sx={{ maxWidth: 500, margin: 'auto', padding: 3 }}>
       <Typography variant="h4" color="textPrimary" mb={3} sx={{ textAlign: 'center' }}>
@@ -55,7 +63,7 @@ const MemberForm = () => {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-          {(id || avatarPreview) && (
+          {((id && avatarPreview) || avatarPreview) && (
             <Box cols={1} borderRadius={2} sx={{ maxWidth: 210, maxHeight: 210, overflow: 'hidden' }}>
               <img src={avatarPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
             </Box>
@@ -69,8 +77,8 @@ const MemberForm = () => {
         <TextField
           label="Имя"
           variant="outlined"
-          name="firstName"
-          value={memberData.firstName}
+          name="first_name"
+          value={memberData.first_name || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -79,8 +87,8 @@ const MemberForm = () => {
         <TextField
           label="Фамилия"
           variant="outlined"
-          name="lastName"
-          value={memberData.lastName}
+          name="last_name"
+          value={memberData.last_name || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -91,7 +99,7 @@ const MemberForm = () => {
           variant="outlined"
           type="email"
           name="email"
-          value={memberData.email}
+          value={memberData.email || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -101,7 +109,7 @@ const MemberForm = () => {
           label="Должность"
           variant="outlined"
           name="position"
-          value={memberData.position}
+          value={memberData.position || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -112,7 +120,7 @@ const MemberForm = () => {
           variant="outlined"
           type="text"
           name="username"
-          value={memberData.username}
+          value={memberData.username || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -123,7 +131,7 @@ const MemberForm = () => {
           variant="outlined"
           type="password"
           name="password"
-          value={memberData.password}
+          value={memberData.password || ''}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -135,6 +143,11 @@ const MemberForm = () => {
       </form>
     </Box>
   );
+};
+
+MemberForm.propTypes = {
+  id: PropTypes.string,
+  member: PropTypes.object
 };
 
 export default MemberForm;

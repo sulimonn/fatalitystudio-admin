@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useNavigate, Link } from 'react-router-dom';
 
 // material-ui
 import { TextField, Button, Grid, Paper, Box, Divider, Typography, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
 
 // project import
 import InputFileUpload from 'components/@extended/InputFile';
-import { useAddArticleMutation, useDeleteArticleMutation, useGetArticleQuery, useUpdateArticleMutation } from 'store/reducers/blogApi';
-import { getUsers } from 'store/reducers/actions';
+import { useAddArticleMutation, useDeleteArticleMutation, useUpdateArticleMutation } from 'store/reducers/blogApi';
+import { useGetMemberQuery } from 'store/reducers/team';
 
-const Article = () => {
+const ArticleForm = ({ id, data }) => {
   const navigate = useNavigate();
-  const { id } = useParams() || -1;
   const [addArticle, addRes] = useAddArticleMutation();
   const [deleteArticle, deleteRes] = useDeleteArticleMutation();
   const [updateArticle, updateRes] = useUpdateArticleMutation();
-  const { data } = useGetArticleQuery(id);
 
   const [article, setArticle] = useState({});
   const [coverPreview, setCoverPreview] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const { data: authors = [] } = getUsers();
+  const { data: authors = [] } = useGetMemberQuery();
 
   useEffect(() => {
     if (data) {
@@ -174,6 +173,7 @@ const Article = () => {
             margin="normal"
             value={article.title_sec1 || ''}
             onChange={(e) => setArticle({ ...article, title_sec1: e.target.value })}
+            required
           />
           <TextField
             label="Текст"
@@ -184,6 +184,7 @@ const Article = () => {
             rows={4}
             value={article.content_sec1}
             onChange={(e) => setArticle({ ...article, content_sec1: e.target.value })}
+            required
           />
           <Divider
             sx={{
@@ -202,6 +203,7 @@ const Article = () => {
             margin="normal"
             value={article.title_sec2 || ''}
             onChange={(e) => setArticle({ ...article, title_sec2: e.target.value })}
+            required
           />
           <TextField
             label="Текст"
@@ -212,6 +214,7 @@ const Article = () => {
             rows={4}
             value={article.content_sec2}
             onChange={(e) => setArticle({ ...article, content_sec2: e.target.value })}
+            required
           />
           <Divider
             sx={{
@@ -221,13 +224,16 @@ const Article = () => {
             }}
           />
           <FormControl sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="demo-simple-select-helper-label">Автор</InputLabel>
+            <InputLabel required id="demo-simple-select-helper-label">
+              Автор
+            </InputLabel>
             <Select
               labelId="demo-simple-select-helper-label"
               id="author"
               label="Автор"
-              value={article.author || 1}
+              value={article.author || ''}
               onChange={(e) => setArticle({ ...article, author: e.target.value })}
+              required
             >
               {authors.map((author) => (
                 <MenuItem key={author.id} value={author.id}>
@@ -263,4 +269,9 @@ const Article = () => {
   );
 };
 
-export default Article;
+ArticleForm.propTypes = {
+  id: PropTypes.string,
+  data: PropTypes.object
+};
+
+export default ArticleForm;

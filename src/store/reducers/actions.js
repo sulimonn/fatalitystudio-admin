@@ -27,54 +27,13 @@ export const login = createAsyncThunk('auth/login', async (userData, { rejectWit
   }
 });
 
-export const getUsers = createAsyncThunk('auth/getUsers', async ({ rejectWithValue }) => {
-  try {
-    const headers = {};
-    const token = getToken();
-    if (token) {
-      headers['Authorization'] = `Token ${token}`;
-    }
-    const response = await axios.get('https://79.174.82.88/api/users', {
-      'Content-Type': 'application/json',
-      headers
-    });
-    if (response.status !== 200) {
-      return rejectWithValue('Invalid response from server');
-    }
-    const { data } = await response;
-    return data;
-  } catch (error) {
-    return rejectWithValue(error.message);
-  }
-});
-
-export const addUser = createAsyncThunk('auth/addUser', async (userData, { rejectWithValue }) => {
-  try {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${getToken()}`
-      }
-    };
-    const response = await axios.post(`http://79.174.82.88/api/user/add`, JSON.stringify(userData), config);
-    if (response && response.data) {
-      const { data } = response;
-      return data;
-    } else {
-      return rejectWithValue('Invalid response from server');
-    }
-  } catch (error) {
-    return rejectWithValue(error.message);
-  }
-});
-
 export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (token, { rejectWithValue }) => {
   try {
     const headers = {};
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
-    const response = await axios.get('http://79.174.82.88/api/user', {
+    const response = await axios.get('http://79.174.82.88/api/user/me', {
       'Content-Type': 'application/json',
       headers
     });
@@ -138,30 +97,6 @@ const authSlice = createSlice({
         state.user = payload;
       })
       .addCase(fetchUserInfo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(getUsers.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getUsers.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.users = payload;
-      })
-      .addCase(getUsers.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(addUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(addUser.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.users.push(payload);
-      })
-      .addCase(addUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

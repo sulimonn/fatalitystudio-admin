@@ -7,12 +7,21 @@ import reducers from './reducers';
 import { blogApi } from './reducers/blogApi';
 import portfolioApi from './reducers/portfolio';
 import servicesApi from './reducers/services';
+import teamApi from './reducers/team';
+import reviewsApi from './reducers/reviews';
 
 // ==============================|| REDUX TOOLKIT - MAIN STORE ||============================== //
 
 const store = configureStore({
   reducer: reducers,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(blogApi.middleware, portfolioApi.middleware, servicesApi.middleware)
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      blogApi.middleware,
+      portfolioApi.middleware,
+      servicesApi.middleware,
+      teamApi.middleware,
+      reviewsApi.middleware
+    )
 });
 
 const { dispatch } = store;
