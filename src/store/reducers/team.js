@@ -26,11 +26,14 @@ export const teamApi = createApi({
       providesTags: ['Team']
     }),
     addMember: build.mutation({
-      query: (data) => ({
-        url: '/add',
-        method: 'POST',
-        body: data
-      }),
+      query: (data) => {
+        console.log(data);
+        return {
+          url: '/add',
+          method: 'POST',
+          body: data
+        };
+      },
       invalidatesTags: ['Team']
     }),
     deleteMember: build.mutation({

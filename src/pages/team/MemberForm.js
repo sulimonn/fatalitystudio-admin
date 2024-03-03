@@ -21,6 +21,7 @@ const MemberForm = ({ id = null, member = {} }) => {
       setAvatarPreview(member?.avatar);
     }
   }, [member?.avatar]);
+
   if (id && !member.id) {
     return <Loader />;
   }
@@ -42,14 +43,33 @@ const MemberForm = ({ id = null, member = {} }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formData = new FormData();
+
+    Object.entries(memberData).forEach(([key, value]) => {
+      if (id) {
+        if (memberData[key] !== data[key])
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else {
+            formData.append(key, String(value));
+          }
+      } else {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+
     if (id) {
-      await updateMember({ ...memberData, id });
+      await updateMember({ ...formData, id });
       if (!updateResponse.error) {
         return navigate('/team');
       }
       return alert('Error updating member');
     } else {
-      await addMember(memberData);
+      await addMember(formData);
       if (!addResponse.error) {
         return navigate('/team');
       }
@@ -113,7 +133,6 @@ const MemberForm = ({ id = null, member = {} }) => {
           onChange={handleChange}
           fullWidth
           margin="normal"
-          required
         />
         <TextField
           label="Username"

@@ -8,7 +8,7 @@ import { TextField, Button, Grid, Paper, Box, Divider, Typography, InputLabel, M
 // project import
 import InputFileUpload from 'components/@extended/InputFile';
 import { useAddArticleMutation, useDeleteArticleMutation, useUpdateArticleMutation } from 'store/reducers/blogApi';
-import { useGetMemberQuery } from 'store/reducers/team';
+import { useGetTeamQuery } from 'store/reducers/team';
 
 const ArticleForm = ({ id, data }) => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const ArticleForm = ({ id, data }) => {
   const [coverPreview, setCoverPreview] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const { data: authors = [] } = useGetMemberQuery();
+  const { data: authors = [] } = useGetTeamQuery();
 
   useEffect(() => {
     if (data) {
@@ -237,7 +237,7 @@ const ArticleForm = ({ id, data }) => {
             >
               {authors.map((author) => (
                 <MenuItem key={author.id} value={author.id}>
-                  {author.name}
+                  {author.first_name && author.last_name ? author.first_name + ' ' + author.last_name : author.username}
                 </MenuItem>
               ))}
             </Select>
