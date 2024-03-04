@@ -12,8 +12,9 @@ export function getToken() {
   return JSON.parse(localStorage.getItem('userToken'))?.value || null;
 }
 function checkToken() {
-  var item = getToken();
+  var item = JSON.parse(localStorage.getItem('userToken'));
   if (item && item?.expiration && new Date().getTime() > item?.expiration) {
+    console.log('expired token');
     localStorage.removeItem('userToken');
   }
 }
@@ -33,6 +34,7 @@ export function useAuth() {
         return;
       }
       const response = await dispatch(fetchUserInfo(token));
+
       if (response.error && token) {
         setErrorMessage(response.payload);
         setIsAuth('error');

@@ -2,21 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { Button } from '@mui/material';
-const InputFileUpload = ({ setFile, children, setPreview }) => {
+const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple = false }) => {
   const handleFileChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
       setFile(undefined);
       return;
     }
-    setFile(e.target.files[0]);
-    const fileUrl = URL.createObjectURL(e.target.files[0]);
-    setPreview(fileUrl);
+    if (!multiple) {
+      if (name) {
+        setFile({ target: { value: e.target.files[0], name: name } });
+      } else setFile(e.target.files[0]);
+      const fileUrl = URL.createObjectURL(e.target.files[0]);
+      setPreview(fileUrl);
+    } else {
+      e.target.name = name;
+      setFile(e);
+      const { files } = e.target;
+      const previews = Array.from(files).map((file) => URL.createObjectURL(file));
+      setPreview(previews);
+    }
   };
 
   return (
     <Button component="label" variant="contained" startIcon={<CloudDownloadIcon />}>
       {children}
-      <input accept="image/*" type="file" style={{ display: 'none' }} onChange={handleFileChange} required />
+      <input
+        accept="image/*"
+        type="file"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        required
+        name={name}
+        multiple={multiple}
+      />
     </Button>
   );
 };
@@ -25,7 +43,8 @@ InputFileUpload.propTypes = {
   setFile: PropTypes.func.isRequired,
   setPreview: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
-  file: PropTypes.object
+  name: PropTypes.string,
+  multiple: PropTypes.bool
 };
 
 export default InputFileUpload;
