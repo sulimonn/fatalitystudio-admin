@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+import { Navigation, Pagination, A11y } from 'swiper/modules';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -13,45 +13,57 @@ import 'swiper/css/scrollbar';
 import { Box, TextField } from '@mui/material';
 import renameFile from 'utils/renameFile';
 
-const MySwiper = ({ photosPreviews, photos, setPhotos }) => {
+const MySwiper = ({ photosPreviews, photos, setPhotos, description = false }) => {
   return (
-    <Box maxWidth="610px">
+    <Box maxWidth={{ xs: '370px', sm: '700px' }}>
       <Swiper
         // install Swiper modules
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        modules={[Navigation, Pagination, A11y]}
         spaceBetween={50}
         slidesPerView={1}
         navigation
         pagination={{ clickable: true }}
-        scrollbar={{ draggable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
-        {photosPreviews.map((photo, i) => (
-          <SwiperSlide key={i}>
-            <div style={{ display: 'block', width: '410px', height: '410px', margin: '0 auto ' }}>
-              <img src={photo} alt="img" loading="lazy" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-            <Box mb={4} display="flex" justifyContent="center">
-              <TextField
-                label="Описание"
-                variant="outlined"
-                name="description"
-                fullWidth
-                margin="normal"
-                value={photos[i]?.name || ''}
-                onChange={(e) => {
-                  setPhotos((prevPhotos) => {
-                    const updatedPhotos = [...prevPhotos];
-                    updatedPhotos[i] = renameFile(photos[i], e.target.value);
-                    return updatedPhotos;
-                  });
+        {photosPreviews.map((data, i) => {
+          const photo = !data.startsWith('blob:') ? JSON.parse(data).upload : data;
+          return (
+            <SwiperSlide key={i}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  maxWidth: { xs: '250px', sm: '410px' },
+                  height: { xs: '200px', sm: '300px' },
+                  mb: 4,
+                  mx: 'auto'
                 }}
-                sx={{ mx: 'auto', width: '80%' }}
-              />
-            </Box>
-          </SwiperSlide>
-        ))}
+              >
+                <img src={photo} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
+              </Box>
+              {description && (
+                <Box display="flex" justifyContent="center">
+                  <TextField
+                    label="Описание"
+                    variant="outlined"
+                    name="description"
+                    fullWidth
+                    margin="normal"
+                    value={photos[i]?.name || ''}
+                    onChange={(e) => {
+                      setPhotos((prevPhotos) => {
+                        const updatedPhotos = [...prevPhotos];
+                        updatedPhotos[i] = renameFile(photos[i], e.target.value);
+                        return updatedPhotos;
+                      });
+                    }}
+                    sx={{ mx: 'auto', width: '80%' }}
+                  />
+                </Box>
+              )}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </Box>
   );
@@ -60,7 +72,8 @@ const MySwiper = ({ photosPreviews, photos, setPhotos }) => {
 MySwiper.propTypes = {
   photosPreviews: PropTypes.array,
   photos: PropTypes.array,
-  setPhotos: PropTypes.func
+  setPhotos: PropTypes.func,
+  description: PropTypes.bool
 };
 
 export default MySwiper;

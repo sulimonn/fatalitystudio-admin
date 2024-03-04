@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getToken } from 'hooks/use-auth';
+import { getToken, setToken } from 'hooks/use-auth';
 
 export const reviewsApi = createApi({
   reducerPath: 'reviewsApi',
@@ -7,6 +7,7 @@ export const reviewsApi = createApi({
     baseUrl: 'http://79.174.82.88/api',
     prepareHeaders: (headers) => {
       const token = getToken();
+      setToken(token);
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }

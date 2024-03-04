@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { setToken } from 'hooks/use-auth';
 
 // Create an API using createApi
 const portfolioApi = createApi({
@@ -7,6 +8,7 @@ const portfolioApi = createApi({
     baseUrl: 'http://79.174.82.88/api/',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
+      setToken(token);
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }
@@ -29,10 +31,26 @@ const portfolioApi = createApi({
       }),
       invalidatesTags: ['portfolio']
     }),
+    addPortfolioBigPhotos: builder.mutation({
+      query: (upload) => ({
+        url: `project/big_photo`,
+        method: 'POST',
+        body: upload
+      }),
+      invalidatesTags: ['portfolio']
+    }),
+    addPortfolioSmallPhotos: builder.mutation({
+      query: (upload) => ({
+        url: `project/small_photo`,
+        method: 'POST',
+        body: upload
+      }),
+      invalidatesTags: ['portfolio']
+    }),
     editPortfolio: builder.mutation({
       query: ({ id, project }) => ({
         url: `project/${id}`,
-        method: 'PUT',
+        method: 'PATCH',
         body: project
       }),
 
@@ -59,7 +77,9 @@ export const {
   useAddPortfolioMutation,
   useEditPortfolioMutation,
   useDeletePortfolioMutation,
-  useGetPortfolioQuery
+  useGetPortfolioQuery,
+  useAddPortfolioBigPhotosMutation,
+  useAddPortfolioSmallPhotosMutation
 } = portfolioApi;
 
 // Export the reducer, actions, and middleware for Redux store configuration

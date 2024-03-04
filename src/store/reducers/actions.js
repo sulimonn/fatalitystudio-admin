@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { getToken, useSetToken } from 'hooks/use-auth';
+import { getToken, setToken } from 'hooks/use-auth';
 
 export const login = createAsyncThunk('auth/login', async (userData, { rejectWithValue }) => {
   try {
@@ -82,7 +82,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = payload.user;
         state.token = payload.token;
-        useSetToken(payload.token);
+        setToken(payload.token);
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.loading = false;

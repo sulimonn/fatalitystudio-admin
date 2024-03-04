@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getToken } from 'hooks/use-auth';
+import { getToken, setToken } from 'hooks/use-auth';
 
 export const teamApi = createApi({
   reducerPath: 'teamApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://79.174.82.88/api/user',
     prepareHeaders: (headers) => {
-      return headers.set('Authorization', `Token ${getToken()}`);
+      const token = getToken();
+      setToken(token);
+      return headers.set('Authorization', `Token ${token}`);
     }
   }),
   tagTypes: ['Team'],

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { Button } from '@mui/material';
-const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple = false }) => {
+const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple = false, required = false }) => {
   const handleFileChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
       setFile(undefined);
@@ -31,7 +31,7 @@ const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple 
         type="file"
         style={{ display: 'none' }}
         onChange={handleFileChange}
-        required
+        required={required}
         name={name}
         multiple={multiple}
       />
@@ -44,7 +44,8 @@ InputFileUpload.propTypes = {
   setPreview: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   name: PropTypes.string,
-  multiple: PropTypes.bool
+  multiple: PropTypes.bool,
+  required: PropTypes.bool
 };
 
 export default InputFileUpload;

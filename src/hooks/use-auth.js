@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserInfo } from 'store/reducers/actions';
 
-export function useSetToken(value) {
+export function setToken(value) {
   checkToken();
   var expirationTime = new Date().getTime() + 3600000;
   localStorage.setItem('userToken', JSON.stringify({ value: value, expiration: expirationTime }));

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { setToken } from 'hooks/use-auth';
 
 export const blogApi = createApi({
   reducerPath: 'blogApi',
@@ -7,6 +8,7 @@ export const blogApi = createApi({
     baseUrl: 'http://79.174.82.88/api',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
+      setToken(token);
       headers.set('Origin', 'http://fatalitystudio.ru');
       if (token) {
         headers.set('Authorization', `Token ${token}`);

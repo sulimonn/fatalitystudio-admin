@@ -7,42 +7,58 @@ import { SliderPicker } from 'react-color';
 import { TextField, Button, Grid, Paper, Typography, InputLabel, MenuItem, FormControl, Select, Box } from '@mui/material';
 
 // project import
-import { useAddPortfolioMutation, useDeletePortfolioMutation, useEditPortfolioMutation } from 'store/reducers/portfolio';
+import {
+  useAddPortfolioBigPhotosMutation,
+  useAddPortfolioMutation,
+  useAddPortfolioSmallPhotosMutation,
+  useDeletePortfolioMutation,
+  useEditPortfolioMutation
+} from 'store/reducers/portfolio';
 import { useCurrentPath } from 'hooks/use-navigate';
 import { useFetchServicesQuery } from 'store/reducers/services';
 import InputFileUpload from 'components/@extended/InputFile';
 import MySwiper from 'components/MySwiper';
-import renameFile from 'utils/renameFile';
+import convertToFormData from 'utils/convertToFormData';
 
-const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) => {
+const ProjectForm = ({ id, response = {} }) => {
   const navigate = useNavigate();
   const { currentPath } = useCurrentPath();
   const services = useFetchServicesQuery().data || [];
 
-  const [coverPreview, setCoverPreview] = useState(response?.cover);
-
   const [updateProject, updateRes] = useEditPortfolioMutation();
   const [addProject, addRes] = useAddPortfolioMutation();
+  const [addBigPhoto, responseBig] = useAddPortfolioBigPhotosMutation();
+  const [addSmallPhoto, responseSmall] = useAddPortfolioSmallPhotosMutation();
   const [deleteProject, deleteResponse] = useDeletePortfolioMutation();
 
-  const [project, setProject] = useState(response);
+  const [project, setProject] = useState(response.data);
   const [bigPhotos, setBigPhotos] = useState([]);
   const [smallPhotos, setSmallPhotos] = useState([]);
-  const [bigPhotosPreview, setBigPhotosPreview] = useState([]);
-  const [smallPhotosPreview, setSmallPhotosPreview] = useState([]);
+
+  const [coverPreview, setCoverPreview] = useState(project?.cover);
+  const [background1Preview, setBackground1Preview] = useState(project?.background_1);
+  const [background2Preview, setBackground2Preview] = useState(project?.background_2);
+  const [bigPhotosPreview, setBigPhotosPreview] = useState(project?.big_photos || []);
+  const [smallPhotosPreview, setSmallPhotosPreview] = useState(project?.small_photos || []);
 
   useEffect(() => {
     if (response.data) {
       setProject(response.data);
+      setBigPhotos(response.data.big_photos || []);
+      setSmallPhotos(response.data.small_photos || []);
+      setCoverPreview(response.data.cover);
+      setBackground1Preview(response.data.background_1);
+      setBackground2Preview(response.data.background_2);
+      setBigPhotosPreview(response.data.big_photos);
+      setSmallPhotosPreview(response.data.small_photos);
     }
   }, [response]);
   const handlePhotosChange = (e) => {
     const { name, files } = e.target;
-    if (name === 'big_photos') {
-      setBigPhotos(Array.from(files).map((file) => renameFile(file, 'Описание')));
-    } else {
-      setSmallPhotos(Array.from(files).map((file) => renameFile(file, 'Описание')));
+    if (name === 'small_photos') {
+      return setSmallPhotos(Array.from(files));
     }
+    setBigPhotos(Array.from(files));
   };
 
   const handleChange = (event) => {
@@ -57,15 +73,47 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
     setProject({ ...project, color: color.hex });
   };
 
+  const handleSubmitPhotos = async (id) => {
+    smallPhotos.map(async (photo) => {
+      const upload = convertToFormData({ upload: photo, project_id: id });
+      console.log(...upload);
+      await addSmallPhoto(upload);
+    });
+
+    bigPhotos.map(async (photo) => {
+      const upload = convertToFormData({ upload: photo, project_id: id });
+      console.log(...upload);
+      await addBigPhoto(upload);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!id) {
-      await addProject(project);
-      if (!addRes.error) navigate(currentPath);
+      const formData = convertToFormData(project);
+      const { data, ...response } = await addProject(formData);
+      console.log(data, response, addRes);
+      if (!addRes.error && !response.error) {
+        await handleSubmitPhotos(data.id);
+        if (!responseBig.error && !responseSmall.error) {
+          navigate(currentPath);
+        }
+      }
     } else {
-      await updateProject({ id, project });
+      let newProj = {};
+      for (let key in project) {
+        if (project[key] === response.data[key] && key === 'id') {
+          newProj[key] = project[key];
+        }
+      }
+      await updateProject({ id, newProj });
       if (!updateRes.error) {
-        navigate(currentPath);
+        await handleSubmitPhotos(id);
+
+        if (!responseBig.error && !responseSmall.error) {
+          navigate(currentPath);
+        }
       }
     }
   };
@@ -85,6 +133,7 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
         </Typography>
         <form onSubmit={handleSubmit} method="post">
           <TextField
+            name="title"
             required
             label="Заголовок"
             variant="outlined"
@@ -94,6 +143,7 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
             onChange={handleChange}
           />
           <TextField
+            name="about"
             required
             label="О проекте"
             variant="outlined"
@@ -105,6 +155,7 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
             onChange={handleChange}
           />
           <TextField
+            name="solution"
             required
             label="Решение"
             variant="outlined"
@@ -139,13 +190,24 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
             </Box>
           </FormControl>
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-            {((id && coverPreview) || coverPreview) && (
-              <Box cols={1} borderRadius={2} sx={{ maxWidth: 210, maxHeight: 210, overflow: 'hidden' }}>
-                <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
+            {coverPreview && (
+              <Box
+                cols={1}
+                borderRadius={2}
+                sx={{
+                  maxWidth: 150,
+                  height: { xs: '200px', sm: '300px' },
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img src={coverPreview} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setCoverPreview} setFile={handleChange} name="cover">
+              <InputFileUpload setPreview={setCoverPreview} setFile={handleChange} name="cover" required={!coverPreview}>
                 Загрузить обложку
               </InputFileUpload>
             </Box>
@@ -158,13 +220,24 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
             gap="20px"
             sx={{ flexDirection: { xs: 'column', sm: 'row' }, mt: 2 }}
           >
-            {((id && coverPreview) || coverPreview) && (
-              <Box cols={1} borderRadius={2} sx={{ maxWidth: 210, maxHeight: 210, overflow: 'hidden' }}>
-                <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
+            {background1Preview && (
+              <Box
+                cols={1}
+                borderRadius={2}
+                sx={{
+                  maxWidth: 250,
+                  height: { xs: '200px', sm: '300px' },
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img src={background1Preview} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setCoverPreview} setFile={handleChange} name="background_1">
+              <InputFileUpload setPreview={setBackground1Preview} setFile={handleChange} name="background_1" required={!background1Preview}>
                 Загрузить фон 1
               </InputFileUpload>
             </Box>
@@ -176,13 +249,24 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
             gap="20px"
             sx={{ flexDirection: { xs: 'column', sm: 'row' }, mt: 2 }}
           >
-            {((id && coverPreview) || coverPreview) && (
-              <Box cols={1} borderRadius={2} sx={{ maxWidth: 210, maxHeight: 210, overflow: 'hidden' }}>
-                <img src={coverPreview} alt="img" loading="lazy" style={{ objectFit: 'cover', height: '100%', width: '100%' }} />
+            {background2Preview && (
+              <Box
+                cols={1}
+                borderRadius={2}
+                sx={{
+                  maxWidth: 250,
+                  height: { xs: '200px', sm: '300px' },
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img src={background2Preview} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setCoverPreview} setFile={handleChange} name="background_2">
+              <InputFileUpload setPreview={setBackground2Preview} setFile={handleChange} name="background_2" required={!background2Preview}>
                 Загрузить фон 2
               </InputFileUpload>
             </Box>
@@ -207,9 +291,17 @@ const ProjectForm = ({ id, response = { big_photos: [], small_photos: [] } }) =>
               </InputFileUpload>
             </Box>
           </Box>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormControl sx={{ my: 2, mx: { xs: 'auto', sm: 0 }, minWidth: 120 }}>
             <InputLabel id="service_id_label">Сервис</InputLabel>
-            <Select required labelId="service_id_label" id="service_id" value={project?.service_id || ''} onChange={handleChange}>
+            <Select
+              name="service_id"
+              required
+              labelId="service_id_label"
+              id="service_id"
+              value={project?.service_id || ''}
+              onChange={handleChange}
+            >
+              {!project?.service_id && <MenuItem value="">Выберите услугу</MenuItem>}
               {services.map((service) => (
                 <MenuItem key={service.id} value={service.id}>
                   {service.title}
