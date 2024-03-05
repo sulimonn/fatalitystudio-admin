@@ -3,7 +3,20 @@ import PropTypes from 'prop-types';
 import { useNavigate, Link } from 'react-router-dom';
 
 // material-ui
-import { TextField, Button, Grid, Paper, Box, Divider, Typography, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Grid,
+  Paper,
+  Box,
+  Divider,
+  Typography,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  FormHelperText
+} from '@mui/material';
 
 // project import
 import InputFileUpload from 'components/@extended/InputFile';
@@ -14,7 +27,9 @@ const ArticleForm = ({ id, data }) => {
   const navigate = useNavigate();
   const [addArticle, addRes] = useAddArticleMutation();
   const [deleteArticle, deleteRes] = useDeleteArticleMutation();
-  const [updateArticle, updateRes] = useUpdateArticleMutation();
+  const [updateArticle] = useUpdateArticleMutation();
+
+  const [errors, setErrors] = useState({});
 
   const [article, setArticle] = useState({});
   const [coverPreview, setCoverPreview] = useState(null);
@@ -66,10 +81,20 @@ const ArticleForm = ({ id, data }) => {
         }
       });
       if (id) {
-        if (article.id) await updateArticle({ formData, id });
-        if (!updateRes.isError) {
-          navigate('/blog');
-        } else alert('Error updating article');
+        try {
+          const response = await updateArticle({ formData, id });
+          console.log(response);
+          if (!response.error) {
+            navigate('/blog');
+          } else {
+            console.log(response.error);
+            setErrors(response.error.data);
+
+            throw new Error(response.error.data);
+          }
+        } catch (error) {
+          console.error(error);
+        }
       } else {
         await addArticle(formData);
 
@@ -93,6 +118,17 @@ const ArticleForm = ({ id, data }) => {
       } else alert('Error deleting article');
     }
   };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setArticle({
+      ...article,
+      [name]: value
+    });
+    setErrors({
+      ...errors,
+      [name]: null
+    });
+  };
 
   return (
     <Grid item xs={10} sm={8} md={6}>
@@ -114,35 +150,55 @@ const ArticleForm = ({ id, data }) => {
             </Box>
           </Box>
           <TextField
+            name="title"
             required
+            id="title"
             label="Заголовок"
             variant="outlined"
             fullWidth
             margin="normal"
             value={article.title || ''}
-            onChange={(e) => setArticle({ ...article, title: e.target.value })}
+            onChange={handleChange}
+            error={Boolean(errors?.title)}
           />
+          {errors?.title && (
+            <FormHelperText error id="standard-weight-helper-text-title">
+              {errors?.title}
+            </FormHelperText>
+          )}
           <TextField
+            name="introduction"
             required
             label="Предисловие"
             variant="outlined"
             fullWidth
             margin="normal"
             value={article.introduction || ''}
-            onChange={(e) => setArticle({ ...article, introduction: e.target.value })}
+            onChange={handleChange}
+            error={Boolean(errors?.introduction)}
           />
+          {errors?.introduction && (
+            <FormHelperText error id="standard-weight-helper-text-introduction">
+              {errors?.introduction}
+            </FormHelperText>
+          )}
           <TextField
+            name="content"
             required
             label="Текст"
             variant="outlined"
             fullWidth
             margin="normal"
-            multiline
-            rows={1}
-            value={article.content}
-            onChange={(e) => setArticle({ ...article, content: e.target.value })}
+            value={article.content || ''}
+            onChange={handleChange}
+            error={Boolean(errors?.content)}
           />
 
+          {errors?.content && (
+            <FormHelperText sx={{ mb: 1 }} error id="standard-weight-helper-text-content">
+              {errors?.content}
+            </FormHelperText>
+          )}
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
             {((id && photoPreview) || photoPreview) && (
               <Box cols={1} borderRadius={2} sx={{ maxWidth: 250, maxHeight: 250, overflow: 'hidden' }}>
@@ -156,6 +212,11 @@ const ArticleForm = ({ id, data }) => {
             </Box>
           </Box>
 
+          {errors?.photo && (
+            <FormHelperText error id="standard-weight-helper-text-photo">
+              {errors?.photo}
+            </FormHelperText>
+          )}
           <Divider
             sx={{
               mt: 1,
@@ -167,15 +228,25 @@ const ArticleForm = ({ id, data }) => {
             Section 1
           </Divider>
           <TextField
+            name="title_sec1"
+            id="title_sec1"
             label="Заголовок для секции 1"
             variant="outlined"
             fullWidth
             margin="normal"
             value={article.title_sec1 || ''}
-            onChange={(e) => setArticle({ ...article, title_sec1: e.target.value })}
+            onChange={handleChange}
             required
+            error={Boolean(errors?.title_sec1)}
           />
+          {errors?.title_sec1 && (
+            <FormHelperText error id="standard-weight-helper-text-title_sec1">
+              {errors?.title_sec1}
+            </FormHelperText>
+          )}
           <TextField
+            id="content_sec1"
+            name="content_sec1"
             label="Текст"
             variant="outlined"
             fullWidth
@@ -183,9 +254,35 @@ const ArticleForm = ({ id, data }) => {
             multiline
             rows={4}
             value={article.content_sec1}
-            onChange={(e) => setArticle({ ...article, content_sec1: e.target.value })}
+            onChange={handleChange}
             required
+            error={Boolean(errors?.content_sec1)}
           />
+
+          {errors?.content_sec1 && (
+            <FormHelperText error id="standard-weight-helper-text-content_sec1">
+              {errors?.content_sec1}
+            </FormHelperText>
+          )}
+          <TextField
+            id="middle_sec_text"
+            label="Текст между секциями"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            multiline
+            rows={4}
+            value={article.middle_sec_text}
+            onChange={handleChange}
+            required
+            error={Boolean(errors?.middle_sec_text)}
+          />
+
+          {errors?.middle_sec_text && (
+            <FormHelperText error id="standard-weight-helper-text-middle_sec_text">
+              {errors?.middle_sec_text}
+            </FormHelperText>
+          )}
           <Divider
             sx={{
               mt: 1,
@@ -197,25 +294,42 @@ const ArticleForm = ({ id, data }) => {
             Section 2
           </Divider>
           <TextField
+            id="title_sec2"
+            name="title_sec2"
             label="Заголовок для секции 2"
             variant="outlined"
             fullWidth
             margin="normal"
             value={article.title_sec2 || ''}
-            onChange={(e) => setArticle({ ...article, title_sec2: e.target.value })}
+            onChange={handleChange}
             required
+            error={Boolean(errors?.title_sec2)}
           />
+
+          {errors?.title_sec2 && (
+            <FormHelperText error id="standard-weight-helper-text-title_sec2">
+              {errors?.title_sec2}
+            </FormHelperText>
+          )}
           <TextField
             label="Текст"
+            name="content_sec2"
             variant="outlined"
             fullWidth
             margin="normal"
             multiline
             rows={4}
             value={article.content_sec2}
-            onChange={(e) => setArticle({ ...article, content_sec2: e.target.value })}
+            onChange={handleChange}
             required
+            error={Boolean(errors?.content_sec2)}
           />
+
+          {errors?.content_sec2 && (
+            <FormHelperText error id="standard-weight-helper-text-content_sec2">
+              {errors?.content_sec2}
+            </FormHelperText>
+          )}
           <Divider
             sx={{
               my: 1,
@@ -223,7 +337,7 @@ const ArticleForm = ({ id, data }) => {
               borderColor: 'text.secondary'
             }}
           />
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormControl sx={{ m: 1, minWidth: 120 }} error={Boolean(errors?.author)}>
             <InputLabel required id="demo-simple-select-helper-label">
               Автор
             </InputLabel>
@@ -232,7 +346,7 @@ const ArticleForm = ({ id, data }) => {
               id="author"
               label="Автор"
               value={article.author || ''}
-              onChange={(e) => setArticle({ ...article, author: e.target.value })}
+              onChange={handleChange}
               required
             >
               {authors.map((author) => (
@@ -242,6 +356,12 @@ const ArticleForm = ({ id, data }) => {
               ))}
             </Select>
           </FormControl>
+
+          {errors?.author && (
+            <FormHelperText error id="standard-weight-helper-text-author">
+              {errors?.author}
+            </FormHelperText>
+          )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
             <Button color="primary" type="submit" variant="contained" disabled={addRes.isLoading}>
               {!id ? 'Добавить статью' : 'Сохранить'}

@@ -50,7 +50,7 @@ const ServiceList = () => {
             <Box>
               <ListItemText primary={service.title} secondary={service.description} />
             </Box>
-            <Box>
+            <Box display="flex" gap={1}>
               <Button variant="outlined" color="primary" component={Link} to={`/services/${service.id}`}>
                 Редактировать
               </Button>

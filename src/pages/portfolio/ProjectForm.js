@@ -19,6 +19,7 @@ import { useFetchServicesQuery } from 'store/reducers/services';
 import InputFileUpload from 'components/@extended/InputFile';
 import MySwiper from 'components/MySwiper';
 import convertToFormData from 'utils/convertToFormData';
+import getChangedFields from 'utils/getChangedData';
 
 const ProjectForm = ({ id, response = {} }) => {
   const navigate = useNavigate();
@@ -26,10 +27,11 @@ const ProjectForm = ({ id, response = {} }) => {
   const services = useFetchServicesQuery().data || [];
 
   const [updateProject, updateRes] = useEditPortfolioMutation();
-  const [addProject, addRes] = useAddPortfolioMutation();
+  const [addProject, { ...addRes }] = useAddPortfolioMutation();
   const [addBigPhoto, responseBig] = useAddPortfolioBigPhotosMutation();
   const [addSmallPhoto, responseSmall] = useAddPortfolioSmallPhotosMutation();
   const [deleteProject, deleteResponse] = useDeletePortfolioMutation();
+  console.log(updateRes);
 
   const [project, setProject] = useState(response.data);
   const [bigPhotos, setBigPhotos] = useState([]);
@@ -49,8 +51,8 @@ const ProjectForm = ({ id, response = {} }) => {
       setCoverPreview(response.data.cover);
       setBackground1Preview(response.data.background_1);
       setBackground2Preview(response.data.background_2);
-      setBigPhotosPreview(response.data.big_photos);
-      setSmallPhotosPreview(response.data.small_photos);
+      setBigPhotosPreview(response.data.big_photos.map((photo) => JSON.parse(photo).upload));
+      setSmallPhotosPreview(response.data.small_photos.map((photo) => JSON.parse(photo).upload));
     }
   }, [response]);
 
@@ -105,19 +107,23 @@ const ProjectForm = ({ id, response = {} }) => {
         }
       }
     } else {
-      let newProj = {};
-      for (let key in project) {
-        if (project[key] === response.data[key] && key === 'id') {
-          newProj[key] = project[key];
-        }
-      }
-      await updateProject({ id, newProj });
-      if (!updateRes.error) {
-        await handleSubmitPhotos(id);
+      try {
+        let newProj = getChangedFields(response.data, project);
+        delete newProj.id;
+        const formData = convertToFormData(newProj);
+        await updateProject({ id, project: formData });
+        if (!updateRes.error) {
+          await handleSubmitPhotos(id);
 
-        if (!responseBig.error || !responseSmall.error) {
-          navigate(currentPath);
+          if (!responseBig.error || !responseSmall.error) {
+            console.log(responseBig, responseSmall);
+            navigate(currentPath);
+          }
+        } else {
+          throw new Error(updateRes.error);
         }
+      } catch (err) {
+        console.log(err);
       }
     }
   };
@@ -147,6 +153,16 @@ const ProjectForm = ({ id, response = {} }) => {
             onChange={handleChange}
           />
           <TextField
+            name="description"
+            required
+            label="Описание"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={project?.description || ''}
+            onChange={handleChange}
+          />
+          <TextField
             name="about"
             required
             label="О проекте"
@@ -156,6 +172,18 @@ const ProjectForm = ({ id, response = {} }) => {
             multiline
             rows={4}
             value={project?.about || ''}
+            onChange={handleChange}
+          />
+          <TextField
+            name="about_content"
+            required
+            label="О содержании проекта"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            multiline
+            rows={4}
+            value={project?.about_content || ''}
             onChange={handleChange}
           />
           <TextField
@@ -305,7 +333,6 @@ const ProjectForm = ({ id, response = {} }) => {
               value={project?.service_id || ''}
               onChange={handleChange}
             >
-              {!project?.service_id && <MenuItem value="">Выберите услугу</MenuItem>}
               {services.map((service) => (
                 <MenuItem key={service.id} value={service.id}>
                   {service.title}

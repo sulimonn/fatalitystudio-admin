@@ -38,10 +38,10 @@ const servicesApi = createApi({
       invalidatesTags: ['services']
     }),
     editService: builder.mutation({
-      query: ({ id, ...service }) => ({
-        url: `service/${id}`,
+      query: ({ id, formData }) => ({
+        url: `service/${id}/update`,
         method: 'PATCH',
-        body: service
+        body: formData
       }),
       invalidatesTags: ['services']
     }),

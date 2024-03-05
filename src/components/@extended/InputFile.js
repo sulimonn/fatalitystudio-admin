@@ -29,7 +29,7 @@ const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple 
       <input
         accept="image/*"
         type="file"
-        style={{ display: 'none' }}
+        style={{ width: 1, height: 0 }}
         onChange={handleFileChange}
         required={required}
         name={name}

@@ -23,8 +23,7 @@ const MySwiper = ({ photosPreviews, photos, setPhotos, description = false }) =>
         navigation
         pagination={{ clickable: true }}
       >
-        {photosPreviews.map((data, i) => {
-          const photo = !data.startsWith('blob:') ? JSON.parse(data).upload : data;
+        {photosPreviews.map((photo, i) => {
           return (
             <SwiperSlide key={i}>
               <Box
@@ -37,7 +36,12 @@ const MySwiper = ({ photosPreviews, photos, setPhotos, description = false }) =>
                   mx: 'auto'
                 }}
               >
-                <img src={photo} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
+                <img
+                  src={'http://79.174.82.88/' + photo}
+                  alt="img"
+                  loading="lazy"
+                  style={{ width: 'auto', height: '100%', objectFit: 'cover' }}
+                />
               </Box>
               {description && (
                 <Box display="flex" justifyContent="center" mb={4}>
