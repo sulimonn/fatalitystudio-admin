@@ -51,6 +51,9 @@ const ServiceList = () => {
               <ListItemText primary={service.title} secondary={service.description} />
             </Box>
             <Box>
+              <Button variant="outlined" color="primary" component={Link} to={`/services/${service.id}`}>
+                Редактировать
+              </Button>
               <Button variant="outlined" color="error" onClick={() => handleDelete(service.id)}>
                 Удалить
               </Button>

@@ -39,6 +39,7 @@ const portfolioApi = createApi({
       }),
       invalidatesTags: ['portfolio']
     }),
+    editPortfolioBigPhotos: builder.mutation({}),
     addPortfolioSmallPhotos: builder.mutation({
       query: (upload) => ({
         url: `project/small_photo`,

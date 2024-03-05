@@ -27,6 +27,7 @@ const Team = Loadable(lazy(() => import('pages/team/Team')));
 const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
 const UpdateMember = Loadable(lazy(() => import('pages/team/UpdateMember')));
 const ServiceList = Loadable(lazy(() => import('pages/services/ServiceList')));
+const UpdateService = Loadable(lazy(() => import('pages/services/UpdateService')));
 const AddService = Loadable(lazy(() => import('pages/services/AddService')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -152,7 +153,7 @@ const MainRoutes = {
         },
         {
           path: ':id',
-          element: <ServiceList />
+          element: <UpdateService />
         },
         {
           path: 'new',

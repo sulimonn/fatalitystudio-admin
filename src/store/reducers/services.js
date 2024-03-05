@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { setToken } from 'hooks/use-auth';
 
 const servicesApi = createApi({
   reducerPath: 'services',
@@ -6,6 +7,7 @@ const servicesApi = createApi({
     baseUrl: 'http://79.174.82.88/api/',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
+      setToken(token);
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }
@@ -32,6 +34,30 @@ const servicesApi = createApi({
       query: (id) => ({
         url: `service/${id}`,
         method: 'DELETE'
+      }),
+      invalidatesTags: ['services']
+    }),
+    editService: builder.mutation({
+      query: ({ id, ...service }) => ({
+        url: `service/${id}`,
+        method: 'PATCH',
+        body: service
+      }),
+      invalidatesTags: ['services']
+    }),
+    addProcess: builder.mutation({
+      query: (process) => ({
+        url: 'service/process',
+        method: 'POST',
+        body: process
+      }),
+      invalidatesTags: ['services']
+    }),
+    editProcess: builder.mutation({
+      query: ({ id, ...process }) => ({
+        url: `service/process/${id}`,
+        method: 'PATCH',
+        body: process
       }),
       invalidatesTags: ['services']
     }),
@@ -68,6 +94,9 @@ export const {
   useFetchServicesQuery,
   useAddServiceMutation,
   useDeleteServiceMutation,
+  useEditServiceMutation,
+  useAddProcessMutation,
+  useEditProcessMutation,
   useFetchTasksQuery,
   useAddTaskMutation,
   useReviewTaskMutation,

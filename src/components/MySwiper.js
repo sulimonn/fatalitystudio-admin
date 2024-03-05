@@ -11,7 +11,6 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import { Box, TextField } from '@mui/material';
-import renameFile from 'utils/renameFile';
 
 const MySwiper = ({ photosPreviews, photos, setPhotos, description = false }) => {
   return (
@@ -35,25 +34,24 @@ const MySwiper = ({ photosPreviews, photos, setPhotos, description = false }) =>
                   alignItems: 'center',
                   maxWidth: { xs: '250px', sm: '410px' },
                   height: { xs: '200px', sm: '300px' },
-                  mb: 4,
                   mx: 'auto'
                 }}
               >
                 <img src={photo} alt="img" loading="lazy" style={{ width: 'auto', height: '100%', objectFit: 'cover' }} />
               </Box>
               {description && (
-                <Box display="flex" justifyContent="center">
+                <Box display="flex" justifyContent="center" mb={4}>
                   <TextField
                     label="Описание"
                     variant="outlined"
                     name="description"
                     fullWidth
                     margin="normal"
-                    value={photos[i]?.name || ''}
+                    value={photos[i]?.title || ''}
                     onChange={(e) => {
                       setPhotos((prevPhotos) => {
                         const updatedPhotos = [...prevPhotos];
-                        updatedPhotos[i] = renameFile(photos[i], e.target.value);
+                        updatedPhotos[i].title = e.target.value;
                         return updatedPhotos;
                       });
                     }}

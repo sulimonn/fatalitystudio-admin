@@ -38,14 +38,14 @@ const ProjectForm = ({ id, response = {} }) => {
   const [coverPreview, setCoverPreview] = useState(project?.cover);
   const [background1Preview, setBackground1Preview] = useState(project?.background_1);
   const [background2Preview, setBackground2Preview] = useState(project?.background_2);
-  const [bigPhotosPreview, setBigPhotosPreview] = useState(project?.big_photos || []);
-  const [smallPhotosPreview, setSmallPhotosPreview] = useState(project?.small_photos || []);
+  const [bigPhotosPreview, setBigPhotosPreview] = useState([]);
+  const [smallPhotosPreview, setSmallPhotosPreview] = useState([]);
 
   useEffect(() => {
     if (response.data) {
-      setProject(response.data);
-      setBigPhotos(response.data.big_photos || []);
-      setSmallPhotos(response.data.small_photos || []);
+      setProject(() => response.data);
+      setBigPhotos(response.data.big_photos.map((photo) => JSON.parse(photo)));
+      setSmallPhotos(response.data.small_photos.map((photo) => JSON.parse(photo)));
       setCoverPreview(response.data.cover);
       setBackground1Preview(response.data.background_1);
       setBackground2Preview(response.data.background_2);
@@ -53,10 +53,15 @@ const ProjectForm = ({ id, response = {} }) => {
       setSmallPhotosPreview(response.data.small_photos);
     }
   }, [response]);
+
   const handlePhotosChange = (e) => {
     const { name, files } = e.target;
     if (name === 'small_photos') {
-      return setSmallPhotos(Array.from(files));
+      return setSmallPhotos(
+        Array.from(files).map((file) => {
+          return { title: 'Описание', upload: file };
+        })
+      );
     }
     setBigPhotos(Array.from(files));
   };
@@ -74,17 +79,17 @@ const ProjectForm = ({ id, response = {} }) => {
   };
 
   const handleSubmitPhotos = async (id) => {
-    smallPhotos.map(async (photo) => {
-      const upload = convertToFormData({ upload: photo, project_id: id });
-      console.log(...upload);
-      await addSmallPhoto(upload);
-    });
+    if (!response.data) {
+      smallPhotos.map(async (photo) => {
+        const upload = convertToFormData({ upload: photo, project_id: id });
+        await addSmallPhoto(upload);
+      });
 
-    bigPhotos.map(async (photo) => {
-      const upload = convertToFormData({ upload: photo, project_id: id });
-      console.log(...upload);
-      await addBigPhoto(upload);
-    });
+      bigPhotos.map(async (photo) => {
+        const upload = convertToFormData({ upload: photo, project_id: id });
+        await addBigPhoto(upload);
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -93,10 +98,9 @@ const ProjectForm = ({ id, response = {} }) => {
     if (!id) {
       const formData = convertToFormData(project);
       const { data, ...response } = await addProject(formData);
-      console.log(data, response, addRes);
       if (!addRes.error && !response.error) {
         await handleSubmitPhotos(data.id);
-        if (!responseBig.error && !responseSmall.error) {
+        if (!responseBig.error || !responseSmall.error) {
           navigate(currentPath);
         }
       }
@@ -111,7 +115,7 @@ const ProjectForm = ({ id, response = {} }) => {
       if (!updateRes.error) {
         await handleSubmitPhotos(id);
 
-        if (!responseBig.error && !responseSmall.error) {
+        if (!responseBig.error || !responseSmall.error) {
           navigate(currentPath);
         }
       }
@@ -283,7 +287,7 @@ const ProjectForm = ({ id, response = {} }) => {
 
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: 'column', mt: 2 }}>
             {!!smallPhotosPreview.length && (
-              <MySwiper photosPreviews={smallPhotosPreview} setPhotos={setSmallPhotos} photos={smallPhotos} />
+              <MySwiper photosPreviews={smallPhotosPreview} setPhotos={setSmallPhotos} photos={smallPhotos} description />
             )}
             <Box display="flex" justifyContent="center">
               <InputFileUpload setPreview={setSmallPhotosPreview} setFile={handlePhotosChange} name="small_photos" multiple>
