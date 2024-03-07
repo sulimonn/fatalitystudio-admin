@@ -20,35 +20,35 @@ const requests = {
   type: 'group',
   children: [
     {
-      id: 'application1',
+      id: 'application',
       title: 'Приложения',
       type: 'item',
       url: '/requests/applications',
       icon: icons.AppstoreAddOutlined
     },
     {
-      id: 'webpage1',
+      id: 'webpage',
       title: 'Сайты',
       type: 'item',
       url: '/requests/webpages',
       icon: icons.LayoutOutlined
     },
     {
-      id: 'crm1',
+      id: 'crm',
       title: 'CRM',
       type: 'item',
       url: '/requests/crm',
       icon: icons.DisplaySettingsOutlined
     },
     {
-      id: 'delivery1',
+      id: 'delivery',
       title: 'Агрегаторы доставки',
       type: 'item',
       url: '/requests/development-delivery',
       icon: icons.DeliveryDiningOutlined
     },
     {
-      id: 'design1',
+      id: 'design',
       title: 'Дизайн',
       type: 'item',
       url: '/requests/design',

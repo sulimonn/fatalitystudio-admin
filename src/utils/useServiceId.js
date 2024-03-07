@@ -8,11 +8,11 @@ export const useServiceId = (type) => {
   }
   let service;
   switch (type) {
-    case 'app':
+    case 'application':
       service = services.find((service) => service.title.includes('Разработка приложений'));
       break;
-    case 'web':
-      service = services.find((service) => service.title.includes('Разработка сайтов'));
+    case 'webpage':
+      service = services.find((service) => service.title.includes('азработка сайто'));
       break;
     case 'seo':
       service = services.find((service) => service.title.includes('SEO'));

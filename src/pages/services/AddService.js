@@ -29,8 +29,8 @@ const AddService = ({ response }) => {
 
   const [addService, { isLoading }] = useAddServiceMutation();
   const [updateService, { isLoading: isLoadingUpdate }] = useEditServiceMutation();
-  const [updateProcess] = useEditProcessMutation();
-  const [addProcess] = useAddProcessMutation();
+  const [updateProcess, { isLoading: isLoadingUpdateProcess }] = useEditProcessMutation();
+  const [addProcess, { isLoading: isLoadingAddProcess }] = useAddProcessMutation();
 
   const handleProcess = async (id) => {
     const finalProcesses = processes.filter((process) => !!process.content || !!process.title);
@@ -381,8 +381,14 @@ const AddService = ({ response }) => {
             </FormHelperText>
           )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }} mt={3}>
-            <Button color="primary" type="submit" variant="contained" disabled={isLoading || isLoadingUpdate} size="large">
-              Добавить услугу
+            <Button
+              color="primary"
+              type="submit"
+              variant="contained"
+              disabled={isLoading || isLoadingUpdate || isLoadingAddProcess || isLoadingUpdateProcess}
+              size="large"
+            >
+              {response ? 'Изменить' : 'Добавить услугу'}
             </Button>
           </Grid>
         </form>

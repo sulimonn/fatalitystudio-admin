@@ -23,6 +23,7 @@ const Blog = Loadable(lazy(() => import('pages/blog/Blog')));
 const AddArticle = Loadable(lazy(() => import('pages/blog/AddArticle')));
 const UpdateArticle = Loadable(lazy(() => import('pages/blog/UpdateArticle')));
 const Feedback = Loadable(lazy(() => import('pages/feedback/Feedback')));
+const AddFeedback = Loadable(lazy(() => import('pages/feedback/AddFeedback')));
 const Team = Loadable(lazy(() => import('pages/team/Team')));
 const MemberForm = Loadable(lazy(() => import('pages/team/MemberForm')));
 const UpdateMember = Loadable(lazy(() => import('pages/team/UpdateMember')));
@@ -89,7 +90,16 @@ const MainRoutes = {
     },
     {
       path: 'feedback',
-      element: <Feedback />
+      children: [
+        {
+          path: '',
+          element: <Feedback />
+        },
+        {
+          path: 'new',
+          element: <AddFeedback />
+        }
+      ]
     },
     {
       path: 'team',

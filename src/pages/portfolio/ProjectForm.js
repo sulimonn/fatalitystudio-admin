@@ -26,10 +26,10 @@ const ProjectForm = ({ id, response = {} }) => {
   const { currentPath } = useCurrentPath();
   const services = useFetchServicesQuery().data || [];
 
-  const [updateProject, updateRes] = useEditPortfolioMutation();
-  const [addProject, { ...addRes }] = useAddPortfolioMutation();
-  const [addBigPhoto] = useAddPortfolioBigPhotosMutation();
-  const [addSmallPhoto] = useAddPortfolioSmallPhotosMutation();
+  const [updateProject, { isLoading: isUpdating }] = useEditPortfolioMutation();
+  const [addProject, { isLoading: isAdding }] = useAddPortfolioMutation();
+  const [addBigPhoto, { isLoading: isLoadingBig }] = useAddPortfolioBigPhotosMutation();
+  const [addSmallPhoto, { isLoading: isLoadingSmall }] = useAddPortfolioSmallPhotosMutation();
   const [deleteProject, deleteResponse] = useDeletePortfolioMutation();
 
   const [errors, setErrors] = useState();
@@ -123,25 +123,20 @@ const ProjectForm = ({ id, response = {} }) => {
     if (!id) {
       const formData = convertToFormData(project);
       const { data, ...response } = await addProject(formData);
-      if (!addRes.error && !response.error) {
+      if (!response.error) {
         await handleSubmitPhotos(data.id);
       } else {
         setErrors(response?.error.data);
       }
     } else {
-      try {
-        let newProj = getChangedFields(response.data, project);
-        delete newProj.id;
-        const formData = convertToFormData(newProj);
-        const update = await updateProject({ id, project: formData });
-        if (!updateRes.error) {
-          await handleSubmitPhotos(id);
-        } else {
-          setErrors(update.error.data);
-          throw new Error(updateRes.error);
-        }
-      } catch (err) {
-        console.log(err);
+      let newProj = getChangedFields(response.data, project);
+      delete newProj.id;
+      const formData = convertToFormData(newProj);
+      const update = await updateProject({ id, project: formData });
+      if (!update.error) {
+        await handleSubmitPhotos(id);
+      } else {
+        setErrors(update.error.data);
       }
     }
   };
@@ -439,7 +434,7 @@ const ProjectForm = ({ id, response = {} }) => {
             </FormHelperText>
           )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
-            <Button color="primary" type="submit" variant="contained" disabled={addRes.isLoading || updateRes.isLoading}>
+            <Button color="primary" type="submit" variant="contained" disabled={isAdding || isUpdating || isLoadingBig || isLoadingSmall}>
               {!id ? 'Добавить проект' : 'Сохранить'}
             </Button>
             {id && (

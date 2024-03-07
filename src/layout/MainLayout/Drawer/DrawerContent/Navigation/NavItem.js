@@ -9,6 +9,7 @@ import { Avatar, Chip, ListItemButton, ListItemIcon, ListItemText, Typography } 
 
 // project import
 import { activeItem } from 'store/reducers/menu';
+import useGetTaskCount from 'hooks/use-taskcount';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
@@ -50,7 +51,7 @@ const NavItem = ({ item, level }) => {
 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';
-
+  const taskCount = useGetTaskCount(item.id);
   return (
     <ListItemButton
       {...listItemProps}
@@ -118,8 +119,11 @@ const NavItem = ({ item, level }) => {
       {(drawerOpen || (!drawerOpen && level !== 1)) && (
         <ListItemText
           primary={
-            <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
-              {item.title}
+            <Typography
+              variant="h6"
+              sx={{ color: isSelected ? iconSelectedColor : textColor, display: 'flex', justifyContent: 'space-between' }}
+            >
+              <span>{item.title}</span> {taskCount !== 0 && <Chip size="small" label={taskCount.toString()} color="primary" />}
             </Typography>
           }
         />

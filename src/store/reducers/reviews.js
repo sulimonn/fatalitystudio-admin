@@ -25,7 +25,7 @@ export const reviewsApi = createApi({
     }),
     addReview: build.mutation({
       query: (data) => ({
-        url: '/review/add',
+        url: '/review',
         method: 'POST',
         body: data
       }),

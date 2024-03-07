@@ -27,7 +27,7 @@ const ArticleForm = ({ id, data }) => {
   const navigate = useNavigate();
   const [addArticle, addRes] = useAddArticleMutation();
   const [deleteArticle, deleteRes] = useDeleteArticleMutation();
-  const [updateArticle] = useUpdateArticleMutation();
+  const [updateArticle, { isLoading: isLoadingUpdate }] = useUpdateArticleMutation();
 
   const [errors, setErrors] = useState({});
 
@@ -363,7 +363,7 @@ const ArticleForm = ({ id, data }) => {
             </FormHelperText>
           )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
-            <Button color="primary" type="submit" variant="contained" disabled={addRes.isLoading}>
+            <Button color="primary" type="submit" variant="contained" disabled={addRes.isLoading || isLoadingUpdate}>
               {!id ? 'Добавить статью' : 'Сохранить'}
             </Button>
             {id && (

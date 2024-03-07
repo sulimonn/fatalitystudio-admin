@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // initial state
 const initialState = {
-  openItem: ['application1'],
-  defaultId: 'application1',
+  openItem: ['application'],
+  defaultId: 'application',
   openComponent: 'buttons',
   drawerOpen: true,
   componentDrawerOpen: true,
