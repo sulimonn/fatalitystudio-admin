@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useGetPortfolioQuery } from 'store/reducers/portfolio';
 import ProjectForm from './ProjectForm';
 
+import Loader from 'components/Loader';
+
 const UpdateProject = () => {
   const { id } = useParams();
   const response = useGetPortfolioQuery(id);
@@ -14,6 +16,8 @@ const UpdateProject = () => {
     fetchData();
     return () => {};
   }, [response, id]);
+  if (response.isFetching) return <Loader />;
+
   return <ProjectForm id={id} response={response} />;
 };
 

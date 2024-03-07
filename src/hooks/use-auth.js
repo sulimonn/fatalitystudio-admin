@@ -4,7 +4,8 @@ import { fetchUserInfo } from 'store/reducers/actions';
 
 export function setToken(value) {
   checkToken();
-  var expirationTime = new Date().getTime() + 3600000;
+  const keepSignIn = localStorage.getItem('keepSignIn') === 'true';
+  var expirationTime = new Date().getTime() + (keepSignIn ? 1000 * 60 * 60 * 24 : 1000 * 60 * 60);
   localStorage.setItem('userToken', JSON.stringify({ value: value, expiration: expirationTime }));
 }
 
@@ -34,8 +35,12 @@ export function useAuth() {
         return;
       }
       const response = await dispatch(fetchUserInfo(token));
-
-      if (response.error && token) {
+      if (response.payload.response?.status === 401) {
+        localStorage.removeItem('userToken');
+        setIsAuth(false);
+        return;
+      }
+      if (response.error) {
         setErrorMessage(response.payload);
         setIsAuth('error');
         return;

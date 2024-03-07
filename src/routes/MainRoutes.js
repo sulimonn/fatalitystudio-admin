@@ -29,6 +29,7 @@ const UpdateMember = Loadable(lazy(() => import('pages/team/UpdateMember')));
 const ServiceList = Loadable(lazy(() => import('pages/services/ServiceList')));
 const UpdateService = Loadable(lazy(() => import('pages/services/UpdateService')));
 const AddService = Loadable(lazy(() => import('pages/services/AddService')));
+const PageNotFound = Loadable(lazy(() => import('pages/404/PageNotFound')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -160,6 +161,10 @@ const MainRoutes = {
           element: <AddService />
         }
       ]
+    },
+    {
+      path: '*',
+      element: <PageNotFound />
     }
   ]
 };

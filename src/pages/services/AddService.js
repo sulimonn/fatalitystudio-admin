@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // material-ui
-import { TextField, Button, Grid, Paper, Typography, Box, Divider } from '@mui/material';
+import { TextField, Button, Grid, Paper, Typography, Box, Divider, FormHelperText } from '@mui/material';
 
 // project import
 import { useAddProcessMutation, useAddServiceMutation, useEditProcessMutation, useEditServiceMutation } from 'store/reducers/services';
@@ -16,48 +16,42 @@ const AddService = ({ response }) => {
   const [service, setService] = useState(response || {});
   const [processes, setProcesses] = useState([{ title: '', content: '', index_number: 0, service: service.id }]);
   const [photoPresentPreview, setPhotoPresentPreview] = useState(null);
+  const [errors, setErrors] = useState();
+  const [processErrors, setProcessErrors] = useState([]);
 
   useEffect(() => {
     if (response) {
       setService(() => response);
-      setService((prevService) => ({
-        ...prevService,
-        description:
-          'Специализируемся на создании пользовательских мобильных приложений, обеспечивая надежность и высокую производительность для удовлетворения ваших потребностей.',
-        goals_objectives_text: 'КАКИЕ ЦЕЛИ И ЗАДАЧИ БИЗНЕСА РЕШАЮТ МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ',
-        title_sec1: 'Приложения: Ваш надежный помощник в цифровой эпохе',
-        content_sec1:
-          'Приложения стали неотъемлемой частью нашей повседневной жизни. Они предоставляют удобный и быстрый доступ к разнообразным сервисам и информации. От социальных сетей и мессенджеров до банковских приложений и онлайн-магазинов, приложения облегчают множество аспектов нашей жизни. Они позволяют нам общаться с друзьями, следить за новостями, управлять финансами, заказывать товары и услуги, играть в игры и многое другое. Приложения могут быть полезными для развлечения, обучения, работы и улучшения качества жизни.',
-        title_sec2: 'Для кого подходит мобильное приложение?',
-        content_sec2:
-          'Приложения разрабатываются с учетом разнообразных потребностей пользователей. Они подходят для всех, начиная от частных лиц и заканчивая крупными корпорациями. В зависимости от целевой аудитории и задачи, приложения могут быть адаптированы под конкретные потребности. Мобильные приложения, например, предоставляют мобильность и доступность в любое время и в любом месте. Для бизнеса приложения могут служить инструментами для увеличения продаж, улучшения взаимодействия с клиентами и оптимизации рабочих процессов. В образовательных целях приложения могут обогатить процесс обучения и обеспечить доступ к знаниям. Коротко говоря, приложения - это универсальное средство, способное удовлетворить потребности широкого круга пользователей.',
-        title_process: 'Процесс разработки приложения',
-        mini_text:
-          'В дополнение к разработке мобильных и веб-приложений, мы также специализируемся на создании удобных и мощных административных панелей. Наши административные панели - это инструменты, которые помогают управлять и контролировать ваши приложения и веб-сайты, обеспечивая вам полный контроль над контентом, данными и настройками.',
-        title_present_project: 'Админ-панель приложения “Сытый горец”'
-      }));
       setProcesses(response.processes.map((process) => (process.title = process.name) && process));
-      setPhotoPresentPreview(response.photo_present);
+      setPhotoPresentPreview(response.photo_present_project);
     }
   }, [response]);
 
-  const [addService, addResponse] = useAddServiceMutation();
-  const [updateService] = useEditServiceMutation();
+  const [addService, { isLoading }] = useAddServiceMutation();
+  const [updateService, { isLoading: isLoadingUpdate }] = useEditServiceMutation();
   const [updateProcess] = useEditProcessMutation();
-  const [addProcess, addProcessResponse] = useAddProcessMutation();
+  const [addProcess] = useAddProcessMutation();
 
   const handleProcess = async (id) => {
     const finalProcesses = processes.filter((process) => !!process.content || !!process.title);
-    finalProcesses.forEach(async (process) => {
-      if (response) {
-        await updateProcess(process);
+    finalProcesses.forEach(async (process, index) => {
+      process.service = id;
+      if (process.id) {
+        delete process.name;
+        const processResponse = await updateProcess(process);
+        if (processResponse.error) {
+          setProcessErrors((prev) => ({ ...prev, [index]: processResponse.error.data }));
+        }
       } else {
-        process.service = id;
-        await addProcess(process);
+        const processResponse = await addProcess(process);
+        if (processResponse.error) {
+          setProcessErrors((prev) => ({ ...prev, [index]: processResponse.error.data }));
+        }
       }
-
-      console.log(addProcessResponse);
     });
+    console.log(processErrors);
+
+    if (!processErrors.length) navigate('/services');
   };
 
   const handleSubmit = async (e) => {
@@ -66,27 +60,25 @@ const AddService = ({ response }) => {
       const changedFields = getChangedData(response, service);
       delete changedFields.processes;
       delete changedFields.id;
-      console.log(changedFields);
       const formData = convertToFormData(changedFields);
       const updateResponse = await updateService({ formData, id: response.id });
-      if (updateResponse.error && updateResponse.error) {
-        console.log(updateResponse.error.data.message);
+      if (updateResponse.error) {
+        setErrors(updateResponse.error.data);
       } else {
-        await handleProcess();
-        if (!addProcessResponse.error) navigate('/services');
+        await handleProcess(service.id);
       }
     } else {
-      const addResponse = await addService(service);
-      if (addResponse.error && addResponse.error) {
-        console.log(addResponse.error.data.message);
+      const formData = convertToFormData(service);
+      const addResponse = await addService(formData);
+      if (addResponse.error) {
+        setErrors(addResponse.error.data);
       } else {
         await handleProcess(addResponse.id);
-        if (!addProcessResponse.error) navigate('/services');
       }
     }
   };
   const addNewProcess = () => {
-    if (processes.length > 0 && processes[processes.length - 1].title === '' && processes[processes.length - 1].content === '') return;
+    if (processes.find((process) => process.title === '' && process.content === '')) return;
     setProcesses([...processes, { title: '', content: '', index_number: 0, service: service.id }]);
   };
 
@@ -107,6 +99,11 @@ const AddService = ({ response }) => {
       ...service,
       [name]: value
     });
+
+    setErrors({
+      ...errors,
+      [name]: null
+    });
   };
   return (
     <Grid item xs={10} sm={8} md={6}>
@@ -124,7 +121,14 @@ const AddService = ({ response }) => {
             name="title"
             value={service?.title || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title)}
           />
+
+          {errors?.title && (
+            <FormHelperText error id="standard-weight-helper-text-title">
+              {errors?.title}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="О сервисе"
@@ -132,11 +136,18 @@ const AddService = ({ response }) => {
             fullWidth
             margin="normal"
             multiline
-            rows={4}
+            rows={2}
             name="description"
             value={service?.description || ''}
             onChange={handleChange}
+            error={Boolean(errors?.description)}
           />
+
+          {errors?.description && (
+            <FormHelperText error id="standard-weight-helper-text-description">
+              {errors?.description}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Цели и задачи"
@@ -146,7 +157,14 @@ const AddService = ({ response }) => {
             name="goals_objectives_text"
             value={service?.goals_objectives_text || ''}
             onChange={handleChange}
+            error={Boolean(errors?.goals_objectives_text)}
           />
+
+          {errors?.goals_objectives_text && (
+            <FormHelperText error id="standard-weight-helper-text-goals_objectives_text">
+              {errors?.goals_objectives_text}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Заголовок секции 1"
@@ -156,7 +174,14 @@ const AddService = ({ response }) => {
             name="title_sec1"
             value={service?.title_sec1 || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title_sec1)}
           />
+
+          {errors?.title_sec1 && (
+            <FormHelperText error id="standard-weight-helper-text-title_sec1">
+              {errors?.title_sec1}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Содержание секции 1"
@@ -168,7 +193,14 @@ const AddService = ({ response }) => {
             name="content_sec1"
             value={service?.content_sec1 || ''}
             onChange={handleChange}
+            error={Boolean(errors?.content_sec1)}
           />
+
+          {errors?.content_sec1 && (
+            <FormHelperText error id="standard-weight-helper-text-content_sec1">
+              {errors?.content_sec1}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Заголовок секции 2"
@@ -178,7 +210,14 @@ const AddService = ({ response }) => {
             name="title_sec2"
             value={service?.title_sec2 || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title_sec2)}
           />
+
+          {errors?.title_sec2 && (
+            <FormHelperText error id="standard-weight-helper-text-title_sec2">
+              {errors?.title_sec2}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Содержание секции 2"
@@ -190,7 +229,14 @@ const AddService = ({ response }) => {
             name="content_sec2"
             value={service?.content_sec2 || ''}
             onChange={handleChange}
+            error={Boolean(errors?.content_sec2)}
           />
+
+          {errors?.content_sec2 && (
+            <FormHelperText error id="standard-weight-helper-text-content_sec2">
+              {errors?.content_sec2}
+            </FormHelperText>
+          )}
           <Typography variant="h5" sx={{ mt: 3 }}>
             Процессы
           </Typography>
@@ -204,7 +250,14 @@ const AddService = ({ response }) => {
             name="title_process"
             value={service?.title_process || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title_process)}
           />
+
+          {errors?.title_process && (
+            <FormHelperText error id="standard-weight-helper-text-title_process">
+              {errors?.title_process}
+            </FormHelperText>
+          )}
           {processes.map((process, index) => {
             return (
               <Box key={index}>
@@ -219,6 +272,12 @@ const AddService = ({ response }) => {
                   name="title"
                   onChange={(e) => handleProcessChange(index, e)}
                 />
+
+                {processErrors[index]?.title && (
+                  <FormHelperText error id="standard-weight-helper-text-title">
+                    {processErrors[index]?.title}
+                  </FormHelperText>
+                )}
                 <TextField
                   required={!!(process.title || process.content)}
                   label={`Содержание процесса ${index + 1}`}
@@ -231,6 +290,17 @@ const AddService = ({ response }) => {
                   name="content"
                   onChange={(e) => handleProcessChange(index, e)}
                 />
+
+                {processErrors[index]?.content && (
+                  <FormHelperText error id="standard-weight-helper-text-content">
+                    {processErrors[index]?.content}
+                  </FormHelperText>
+                )}
+                {processErrors[index]?.detail && (
+                  <FormHelperText error id="standard-weight-helper-text-detail">
+                    {processErrors[index]?.detail}
+                  </FormHelperText>
+                )}
               </Box>
             );
           })}
@@ -248,7 +318,14 @@ const AddService = ({ response }) => {
             name="title_present_project"
             value={service?.title_present_project || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title_present_project)}
           />
+
+          {errors?.title_present_project && (
+            <FormHelperText error id="standard-weight-helper-text-title_present_project">
+              {errors?.title_present_project}
+            </FormHelperText>
+          )}
           <TextField
             required
             label="Содержание презентации проекта"
@@ -260,15 +337,22 @@ const AddService = ({ response }) => {
             name="mini_text"
             value={service?.mini_text || ''}
             onChange={handleChange}
+            error={Boolean(errors?.mini_text)}
           />
 
-          <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+          {errors?.mini_text && (
+            <FormHelperText error id="standard-weight-helper-text-mini_text">
+              {errors?.mini_text}
+            </FormHelperText>
+          )}
+
+          <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: 'column' }}>
             {photoPresentPreview && (
               <Box
                 cols={1}
                 borderRadius={2}
                 sx={{
-                  maxWidth: 150,
+                  width: '100%',
                   height: { xs: '200px', sm: '300px' },
                   overflow: 'hidden',
                   display: 'flex',
@@ -280,14 +364,25 @@ const AddService = ({ response }) => {
               </Box>
             )}
             <Box display="flex" justifyContent="center">
-              <InputFileUpload setPreview={setPhotoPresentPreview} setFile={handleChange} name="photo_present_project" required>
+              <InputFileUpload
+                setPreview={setPhotoPresentPreview}
+                setFile={handleChange}
+                name="photo_present_project"
+                required={!photoPresentPreview}
+              >
                 Добавить фото презентации
               </InputFileUpload>
             </Box>
           </Box>
-          <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
-            <Button color="primary" type="submit" variant="contained" disabled={addResponse.isLoading}>
-              Добавить
+
+          {errors?.photo_present_project && (
+            <FormHelperText error id="standard-weight-helper-text-photo_present_project">
+              {errors?.photo_present_project}
+            </FormHelperText>
+          )}
+          <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }} mt={3}>
+            <Button color="primary" type="submit" variant="contained" disabled={isLoading || isLoadingUpdate} size="large">
+              Добавить услугу
             </Button>
           </Grid>
         </form>

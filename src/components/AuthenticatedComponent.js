@@ -29,7 +29,7 @@ const AuthenticatedComponent = ({ children }) => {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh" flexDirection="column" textAlign="center" p={2}>
         <Typography color="primary" variant="h4">
-          {errorMessage || 'Что-то пошло не так'}
+          {errorMessage.message || 'Что-то пошло не так'}
         </Typography>
         <Typography variant="subtitle1">
           Попробуйте{' '}

@@ -48,6 +48,10 @@ const AuthLogin = () => {
     event.preventDefault();
   };
 
+  React.useEffect(() => {
+    localStorage.setItem('keepSignIn', checked.toString());
+  }, [checked]);
+
   return (
     <>
       <Formik
@@ -62,19 +66,20 @@ const AuthLogin = () => {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
             const { error, payload } = await dispatch(login(values));
-
             setStatus({ success: false });
             setSubmitting(false);
             if (!error) {
               navigate('/', { replace: true });
             } else if (payload?.non_field_errors) {
+              console.log(payload);
+              setErrors({ submit: payload.non_field_errors[0] });
               throw new Error(payload.non_field_errors[0]);
             }
             if (error) {
               throw new Error('Something went wrong. Please try again.');
             }
           } catch (err) {
-            console.log(err);
+            //setTouched({ username: true, password: true });
             setStatus({ success: false });
             setErrors({ submit: err.message });
             setSubmitting(false);
@@ -97,7 +102,7 @@ const AuthLogin = () => {
                     placeholder="Enter username"
                     fullWidth
                     autoComplete="username"
-                    error={Boolean(touched.username && errors.username)}
+                    error={Boolean((touched.username && errors.username) || errors.submit)}
                   />
                   {touched.username && errors.username && (
                     <FormHelperText error id="standard-weight-helper-text-username-login">
@@ -111,7 +116,7 @@ const AuthLogin = () => {
                   <InputLabel htmlFor="-password-login">Password</InputLabel>
                   <OutlinedInput
                     fullWidth
-                    error={Boolean(touched.password && errors.password)}
+                    error={Boolean((touched.password && errors.password) || errors.submit)}
                     id="-password-login"
                     type={showPassword ? 'text' : 'password'}
                     value={values.password}

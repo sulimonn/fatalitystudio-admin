@@ -37,13 +37,15 @@ export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (token
       'Content-Type': 'application/json',
       headers
     });
+    console.log(response);
     if (response.status !== 200) {
       return rejectWithValue('Invalid response from server');
     }
     const { data } = await response;
     return data;
   } catch (error) {
-    return rejectWithValue(error.message);
+    console.log(error);
+    return rejectWithValue(error);
   }
 });
 

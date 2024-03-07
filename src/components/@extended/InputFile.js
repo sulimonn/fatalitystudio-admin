@@ -24,12 +24,12 @@ const InputFileUpload = ({ setFile, children, setPreview, name = null, multiple 
   };
 
   return (
-    <Button component="label" variant="contained" startIcon={<CloudDownloadIcon />}>
+    <Button type="button" component="label" variant="contained" startIcon={<CloudDownloadIcon />} sx={{ position: 'relative' }}>
       {children}
       <input
         accept="image/*"
         type="file"
-        style={{ width: 1, height: 0 }}
+        style={{ width: 1, height: 1, opacity: 0, pointerEvents: 'none', position: 'absolute' }}
         onChange={handleFileChange}
         required={required}
         name={name}

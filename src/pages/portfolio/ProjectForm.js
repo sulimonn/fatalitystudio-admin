@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { SliderPicker } from 'react-color';
 
 // material-ui
-import { TextField, Button, Grid, Paper, Typography, InputLabel, MenuItem, FormControl, Select, Box } from '@mui/material';
+import { TextField, Button, Grid, Paper, Typography, InputLabel, MenuItem, FormControl, Select, Box, FormHelperText } from '@mui/material';
 
 // project import
 import {
@@ -28,10 +28,13 @@ const ProjectForm = ({ id, response = {} }) => {
 
   const [updateProject, updateRes] = useEditPortfolioMutation();
   const [addProject, { ...addRes }] = useAddPortfolioMutation();
-  const [addBigPhoto, responseBig] = useAddPortfolioBigPhotosMutation();
-  const [addSmallPhoto, responseSmall] = useAddPortfolioSmallPhotosMutation();
+  const [addBigPhoto] = useAddPortfolioBigPhotosMutation();
+  const [addSmallPhoto] = useAddPortfolioSmallPhotosMutation();
   const [deleteProject, deleteResponse] = useDeletePortfolioMutation();
-  console.log(updateRes);
+
+  const [errors, setErrors] = useState();
+  const [smallErrors, setSmallErrors] = useState();
+  const [bigErrors, setBigErrors] = useState();
 
   const [project, setProject] = useState(response.data);
   const [bigPhotos, setBigPhotos] = useState([]);
@@ -75,22 +78,42 @@ const ProjectForm = ({ id, response = {} }) => {
       ...project,
       [name]: value
     });
+
+    setErrors({
+      ...errors,
+      [name]: null
+    });
   };
   const handleColorChange = (color) => {
     setProject({ ...project, color: color.hex });
+    setErrors({ ...errors, color: null });
   };
 
   const handleSubmitPhotos = async (id) => {
+    let isError = false;
     if (!response.data) {
-      smallPhotos.map(async (photo) => {
-        const upload = convertToFormData({ upload: photo, project_id: id });
-        await addSmallPhoto(upload);
+      smallPhotos.map(async (photo, index) => {
+        console.log(photo);
+        const upload = convertToFormData({ upload: photo.upload, project_id: id, title: photo.title });
+        const resp = await addSmallPhoto(upload);
+        if (resp.error) {
+          isError = true;
+          setSmallErrors((prev) => ({ ...prev, [index]: resp.error.data }));
+        }
       });
 
-      bigPhotos.map(async (photo) => {
+      bigPhotos.map(async (photo, index) => {
         const upload = convertToFormData({ upload: photo, project_id: id });
-        await addBigPhoto(upload);
+        const resp = await addBigPhoto(upload);
+        if (resp.error) {
+          isError = true;
+          setBigErrors((prev) => ({ ...prev, [index]: resp.error.data }));
+        }
       });
+
+      if (!isError) {
+        navigate(currentPath);
+      }
     }
   };
 
@@ -102,24 +125,19 @@ const ProjectForm = ({ id, response = {} }) => {
       const { data, ...response } = await addProject(formData);
       if (!addRes.error && !response.error) {
         await handleSubmitPhotos(data.id);
-        if (!responseBig.error || !responseSmall.error) {
-          navigate(currentPath);
-        }
+      } else {
+        setErrors(response?.error.data);
       }
     } else {
       try {
         let newProj = getChangedFields(response.data, project);
         delete newProj.id;
         const formData = convertToFormData(newProj);
-        await updateProject({ id, project: formData });
+        const update = await updateProject({ id, project: formData });
         if (!updateRes.error) {
           await handleSubmitPhotos(id);
-
-          if (!responseBig.error || !responseSmall.error) {
-            console.log(responseBig, responseSmall);
-            navigate(currentPath);
-          }
         } else {
+          setErrors(update.error.data);
           throw new Error(updateRes.error);
         }
       } catch (err) {
@@ -151,17 +169,31 @@ const ProjectForm = ({ id, response = {} }) => {
             margin="normal"
             value={project?.title || ''}
             onChange={handleChange}
+            error={Boolean(errors?.title)}
           />
+
+          {errors?.title && (
+            <FormHelperText error id="standard-weight-helper-text-title">
+              {errors?.title}
+            </FormHelperText>
+          )}
           <TextField
             name="description"
             required
-            label="Описание"
+            label="Краткое описание"
             variant="outlined"
             fullWidth
             margin="normal"
             value={project?.description || ''}
             onChange={handleChange}
+            error={Boolean(errors?.description)}
           />
+
+          {errors?.description && (
+            <FormHelperText error id="standard-weight-helper-text-description">
+              {errors?.description}
+            </FormHelperText>
+          )}
           <TextField
             name="about"
             required
@@ -173,7 +205,14 @@ const ProjectForm = ({ id, response = {} }) => {
             rows={4}
             value={project?.about || ''}
             onChange={handleChange}
+            error={Boolean(errors?.about)}
           />
+
+          {errors?.about && (
+            <FormHelperText error id="standard-weight-helper-text-about">
+              {errors?.about}
+            </FormHelperText>
+          )}
           <TextField
             name="about_content"
             required
@@ -185,7 +224,14 @@ const ProjectForm = ({ id, response = {} }) => {
             rows={4}
             value={project?.about_content || ''}
             onChange={handleChange}
+            error={Boolean(errors?.about_content)}
           />
+
+          {errors?.about_content && (
+            <FormHelperText error id="standard-weight-helper-text-about_content">
+              {errors?.about_content}
+            </FormHelperText>
+          )}
           <TextField
             name="solution"
             required
@@ -197,7 +243,14 @@ const ProjectForm = ({ id, response = {} }) => {
             rows={4}
             value={project?.solution || ''}
             onChange={handleChange}
+            error={Boolean(errors?.solution)}
           />
+
+          {errors?.solution && (
+            <FormHelperText error id="standard-weight-helper-text-solution">
+              {errors?.solution}
+            </FormHelperText>
+          )}
           <FormControl sx={{ m: 1, minWidth: 120, paddingTop: 3 }}>
             <InputLabel sx={{ marginTop: -2 }} id="color_label">
               Цвет
@@ -215,10 +268,18 @@ const ProjectForm = ({ id, response = {} }) => {
                 sx={{ display: 'inline' }}
                 id="color"
                 name="color"
-                value={project?.color || '#'}
+                placeholder="#000000"
+                value={project?.color || ''}
                 onChange={handleChange}
                 required
+                error={Boolean(errors?.color)}
               />
+
+              {errors?.color && (
+                <FormHelperText error id="standard-weight-helper-text-color">
+                  {errors?.color}
+                </FormHelperText>
+              )}
             </Box>
           </FormControl>
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
@@ -244,6 +305,12 @@ const ProjectForm = ({ id, response = {} }) => {
               </InputFileUpload>
             </Box>
           </Box>
+
+          {errors?.cover && (
+            <FormHelperText error id="standard-weight-helper-text-cover">
+              {errors?.cover}
+            </FormHelperText>
+          )}
 
           <Box
             display="flex"
@@ -274,6 +341,12 @@ const ProjectForm = ({ id, response = {} }) => {
               </InputFileUpload>
             </Box>
           </Box>
+
+          {errors?.background_1 && (
+            <FormHelperText error id="standard-weight-helper-text-background_1">
+              {errors?.background_1}
+            </FormHelperText>
+          )}
           <Box
             display="flex"
             justifyContent="center"
@@ -304,26 +377,46 @@ const ProjectForm = ({ id, response = {} }) => {
             </Box>
           </Box>
 
+          {errors?.background_2 && (
+            <FormHelperText error id="standard-weight-helper-text-background_2">
+              {errors?.background_2}
+            </FormHelperText>
+          )}
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: 'column', mt: 2 }}>
-            {!!bigPhotosPreview.length && <MySwiper photosPreviews={bigPhotosPreview} setPhotos={setBigPhotos} photos={bigPhotos} />}
+            {!!bigPhotosPreview.length && (
+              <MySwiper
+                photosPreviews={bigPhotosPreview}
+                setPhotos={setBigPhotos}
+                photos={bigPhotos}
+                errors={bigErrors}
+                setErrors={setBigErrors}
+              />
+            )}
             <Box display="flex" justifyContent="center">
               <InputFileUpload setPreview={setBigPhotosPreview} setFile={handlePhotosChange} name="big_photos" multiple>
-                Загрузить главные фото
+                Загрузить большие фото
               </InputFileUpload>
             </Box>
           </Box>
 
           <Box display="flex" justifyContent="center" alignItems="center" gap="20px" sx={{ flexDirection: 'column', mt: 2 }}>
             {!!smallPhotosPreview.length && (
-              <MySwiper photosPreviews={smallPhotosPreview} setPhotos={setSmallPhotos} photos={smallPhotos} description />
+              <MySwiper
+                photosPreviews={smallPhotosPreview}
+                setPhotos={setSmallPhotos}
+                photos={smallPhotos}
+                description
+                errors={smallErrors}
+                setErrors={setSmallErrors}
+              />
             )}
             <Box display="flex" justifyContent="center">
               <InputFileUpload setPreview={setSmallPhotosPreview} setFile={handlePhotosChange} name="small_photos" multiple>
-                Загрузить главные фото
+                Загрузить дополнительные фото
               </InputFileUpload>
             </Box>
           </Box>
-          <FormControl sx={{ my: 2, mx: { xs: 'auto', sm: 0 }, minWidth: 120 }}>
+          <FormControl sx={{ my: 2, mx: { xs: 'auto', sm: 0 }, minWidth: 120 }} error={Boolean(errors?.service_id)}>
             <InputLabel id="service_id_label">Сервис</InputLabel>
             <Select
               name="service_id"
@@ -340,6 +433,11 @@ const ProjectForm = ({ id, response = {} }) => {
               ))}
             </Select>
           </FormControl>
+          {errors?.service_id && (
+            <FormHelperText error id="standard-weight-helper-text-service_id">
+              {errors?.service_id}
+            </FormHelperText>
+          )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
             <Button color="primary" type="submit" variant="contained" disabled={addRes.isLoading || updateRes.isLoading}>
               {!id ? 'Добавить проект' : 'Сохранить'}
