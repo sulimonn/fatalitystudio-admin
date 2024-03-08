@@ -9,6 +9,7 @@ import portfolio from './portfolio';
 import auth from './actions';
 import team from './team';
 import reviewsApi from './reviews';
+import snackbarReducer from './snackbar';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -19,6 +20,7 @@ const reducers = combineReducers({
   [portfolio.reducerPath]: portfolio.reducer,
   [team.reducerPath]: team.reducer,
   [reviewsApi.reducerPath]: reviewsApi.reducer,
+  snackbar: snackbarReducer,
   auth
 });
 

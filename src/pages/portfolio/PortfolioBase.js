@@ -51,7 +51,7 @@ const PortfolioBase = ({ title, serviceId }) => {
           portfolioList.map((portfolio) => (
             <Grid item xs={12} sm={6} key={portfolio.id}>
               {/* Portfolio Card */}
-              <Box sx={{ p: 2, backgroundColor: portfolio.bgColor, borderRadius: 2, display: 'flex' }}>
+              <Box sx={{ p: 2, backgroundColor: portfolio.color, borderRadius: 2, display: 'flex', gap: 2 }}>
                 {/* Portfolio Cover */}
                 <Box
                   display="flex"
@@ -71,7 +71,7 @@ const PortfolioBase = ({ title, serviceId }) => {
                   )}
                 </Box>
                 {/* Portfolio Details */}
-                <Box mt={2} gap={1} display="flex" flexDirection="column" justifyContent="space-between">
+                <Box mt={2} gap={1} display="flex" flexDirection="column" justifyContent="space-between" flex={1}>
                   <Box>
                     {/* Portfolio Title and Description */}
                     <Typography variant="h5">{portfolio.title}</Typography>
@@ -93,7 +93,7 @@ const PortfolioBase = ({ title, serviceId }) => {
                       size="small"
                       color="secondary"
                       component={Link}
-                      to={`http://fatalitystudio.netlify.app/portfolio/${portfolio.id}`}
+                      to={`http://79.174.82.88/portfolio/${portfolio.id}`}
                     >
                       Посмотреть
                     </Button>

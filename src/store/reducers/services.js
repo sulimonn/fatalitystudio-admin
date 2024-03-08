@@ -11,12 +11,11 @@ const servicesApi = createApi({
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }
-      headers.set('Origin', 'http://fatalitystudio.ru');
 
       return headers;
     }
   }),
-  tagTypes: ['services'],
+  tagTypes: ['services', 'processes', 'tasks'],
   endpoints: (builder) => ({
     fetchServices: builder.query({
       query: () => 'service',
@@ -51,7 +50,7 @@ const servicesApi = createApi({
         method: 'POST',
         body: process
       }),
-      invalidatesTags: ['services']
+      invalidatesTags: ['processes']
     }),
     editProcess: builder.mutation({
       query: ({ id, ...process }) => ({
@@ -59,11 +58,11 @@ const servicesApi = createApi({
         method: 'PATCH',
         body: process
       }),
-      invalidatesTags: ['services']
+      invalidatesTags: ['processes']
     }),
     fetchTasks: builder.query({
       query: (id) => 'task' + (id ? `?service_id=${id}` : ''),
-      providesTags: ['services']
+      providesTags: ['tasks']
     }),
     addTask: builder.mutation({
       query: (task) => ({
@@ -71,21 +70,29 @@ const servicesApi = createApi({
         method: 'POST',
         body: task
       }),
-      invalidatesTags: ['services']
+      invalidatesTags: ['tasks']
     }),
     deleteTask: builder.mutation({
       query: (id) => ({
         url: `task/${id}/delete`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['services']
+      invalidatesTags: ['tasks']
     }),
     reviewTask: builder.mutation({
       query: (id) => ({
         url: `task/${id}/review`,
         method: 'POST'
       }),
-      invalidatesTags: ['services']
+      invalidatesTags: ['tasks']
+    }),
+    addCommentToTask: builder.mutation({
+      query: ({ id, ...comment }) => ({
+        url: `task/${id}`,
+        method: 'PATCH',
+        body: comment
+      }),
+      invalidatesTags: ['tasks']
     })
   })
 });
@@ -100,7 +107,8 @@ export const {
   useFetchTasksQuery,
   useAddTaskMutation,
   useReviewTaskMutation,
-  useDeleteTaskMutation
+  useDeleteTaskMutation,
+  useAddCommentToTaskMutation
 } = servicesApi;
 
 export default servicesApi;

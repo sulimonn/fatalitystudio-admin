@@ -3,6 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { SliderPicker } from 'react-color';
 
+// redux
+import { useDispatch } from 'react-redux';
+import { openSnackbar } from 'store/reducers/snackbar';
+
 // material-ui
 import { TextField, Button, Grid, Paper, Typography, InputLabel, MenuItem, FormControl, Select, Box, FormHelperText } from '@mui/material';
 
@@ -22,6 +26,7 @@ import convertToFormData from 'utils/convertToFormData';
 import getChangedFields from 'utils/getChangedData';
 
 const ProjectForm = ({ id, response = {} }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentPath } = useCurrentPath();
   const services = useFetchServicesQuery().data || [];
@@ -110,10 +115,14 @@ const ProjectForm = ({ id, response = {} }) => {
           setBigErrors((prev) => ({ ...prev, [index]: resp.error.data }));
         }
       });
-
       if (!isError) {
+        dispatch(openSnackbar('Успешно сохранено', 'success'));
         navigate(currentPath);
       }
+    } else {
+      console.log(currentPath);
+      dispatch(openSnackbar('Изменения сохранены', 'success'));
+      navigate(currentPath);
     }
   };
 
