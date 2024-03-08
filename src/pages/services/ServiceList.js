@@ -39,18 +39,19 @@ const ServiceList = () => {
             key={service.id}
             sx={{
               backgroundColor: 'background.paper',
-              p: 1,
+              p: 1.5,
               m: 1,
               borderRadius: 2,
+              gap: 2,
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              flexDirection: 'column'
             }}
           >
-            <Box>
+            <Box width="100%">
               <ListItemText primary={service.title} secondary={service.description} />
             </Box>
-            <Box display="flex" gap={1}>
+            <Box display="flex" gap={1} width="100%" justifyContent="flex-end">
               <Button variant="outlined" color="primary" component={Link} to={`/services/${service.id}`}>
                 Редактировать
               </Button>

@@ -442,6 +442,11 @@ const ProjectForm = ({ id, response = {} }) => {
               {errors?.service_id}
             </FormHelperText>
           )}
+          {errors?.detail && (
+            <FormHelperText error id="standard-weight-helper-text-detail">
+              {errors?.detail}
+            </FormHelperText>
+          )}
           <Grid container justifyContent="flex-end" columns={{ xs: 12, sm: 8, md: 12 }}>
             <Button color="primary" type="submit" variant="contained" disabled={isAdding || isUpdating || isLoadingBig || isLoadingSmall}>
               {!id ? 'Добавить проект' : 'Сохранить'}

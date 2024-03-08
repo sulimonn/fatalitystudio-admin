@@ -22,7 +22,7 @@ const NavGroup = ({ item }) => {
   };
 
   useEffect(() => {
-    setCollapsed(item.children.find((child) => child.id === openItem[0]) ? true : false);
+    setCollapsed(item.children.find((child) => child.id === openItem[0]) ? true : item.id === 'group-home' ? true : false);
   }, [openItem, item]);
 
   const navCollapse = item.children?.map((menuItem) => {
@@ -42,7 +42,8 @@ const NavGroup = ({ item }) => {
     <List
       subheader={
         item.title &&
-        drawerOpen && (
+        drawerOpen &&
+        (item.id !== 'group-home' ? (
           <Box onClick={toggleCollapse} sx={{ pl: 3, mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="subtitle2" color="textSecondary">
               {item.title}
@@ -57,7 +58,13 @@ const NavGroup = ({ item }) => {
               }}
             />
           </Box>
-        )
+        ) : (
+          <Box sx={{ pl: 3, mb: 1.5 }}>
+            <Typography variant="subtitle2" color="textSecondary">
+              {}
+            </Typography>
+          </Box>
+        ))
       }
       sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
     >

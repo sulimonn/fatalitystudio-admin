@@ -10,11 +10,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 
 // project import
-import { useAddCommentToTaskMutation, useDeleteTaskMutation, useFetchTasksQuery, useReviewTaskMutation } from 'store/reducers/services';
+import {
+  useAddCommentToTaskMutation,
+  useDeleteTaskMutation,
+  useFetchServicesQuery,
+  useFetchTasksQuery,
+  useReviewTaskMutation
+} from 'store/reducers/services';
 import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 
-const Requests = ({ title, id }) => {
+const Requests = ({ title = null, id = null }) => {
   useEffect(() => {
     setTitle(title);
   }, [title]);
@@ -87,6 +93,8 @@ const Requests = ({ title, id }) => {
     }
   };
 
+  const { data: services = [] } = useFetchServicesQuery();
+
   const columns = [
     { field: 'id', headerName: 'ID', width: 15 },
     { field: 'name', headerName: 'Name', width: 80 },
@@ -112,21 +120,23 @@ const Requests = ({ title, id }) => {
         if (edit[params.row.id]) {
           return (
             <>
-              <TextField
-                fullWidth
-                autoFocus
-                variant="outlined"
-                value={comment[rowId]}
-                sx={{ width: '100%' }}
-                name="comment"
-                onChange={(e) => handleChange(e, rowId)}
-                error={Boolean(error?.comment)}
-              />
-              {error?.comment && (
-                <FormHelperText error id="standard-weight-helper-text-comment">
-                  {error?.comment}
-                </FormHelperText>
-              )}
+              <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} width="100%">
+                <TextField
+                  fullWidth
+                  autoFocus
+                  variant="outlined"
+                  value={comment[rowId]}
+                  sx={{ width: '100%' }}
+                  name="comment"
+                  onChange={(e) => handleChange(e, rowId)}
+                  error={Boolean(error?.comment)}
+                />
+                {error?.comment && (
+                  <FormHelperText error id="standard-weight-helper-text-comment">
+                    {error?.comment}
+                  </FormHelperText>
+                )}
+              </Box>
               <IconButton
                 disabled={isLoadingComment}
                 sx={{ ml: 1 }}
@@ -143,7 +153,7 @@ const Requests = ({ title, id }) => {
         }
         return (
           <Box display="flex" justifyContent="space-between" width="100%">
-            <Typography>{params.row.comment}</Typography>
+            <Typography color="textPrimary">{params.row.comment}</Typography>
             <IconButton aria-label="edit" color="primary" variant="outlined" size="small" onClick={() => handleEdit(params.row.id)}>
               <EditIcon />
             </IconButton>
@@ -165,7 +175,7 @@ const Requests = ({ title, id }) => {
       )
     },
     {
-      field: 'service_id',
+      field: 'service',
       headerName: '',
       width: 30,
       renderCell: (params) => (
@@ -182,6 +192,15 @@ const Requests = ({ title, id }) => {
       )
     }
   ];
+  if (!id) {
+    columns.splice(3, 0, {
+      field: 'service_id',
+      headerName: 'Сервис',
+      width: 150,
+      renderCell: (params) => services.find((s) => s.id === params.row.service_id).title
+    });
+  }
+
   return (
     <Box
       style={{
@@ -189,9 +208,11 @@ const Requests = ({ title, id }) => {
         width: '100%'
       }}
     >
-      <Box my={4}>
-        <Typography variant="h4">{title}</Typography>
-      </Box>
+      {id && (
+        <Box my={4}>
+          <Typography variant="h4">{title}</Typography>
+        </Box>
+      )}
       {requests?.length !== 0 ? (
         <DataGrid
           sx={{

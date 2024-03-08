@@ -10,7 +10,7 @@ import Empty from 'pages/Empty';
 import { setTitle } from 'utils/titleHelper';
 import { useDeletePortfolioMutation, useFetchPortfolioQuery } from 'store/reducers/portfolio';
 
-const PortfolioBase = ({ title, serviceId }) => {
+const PortfolioBase = ({ title = null, serviceId = null }) => {
   // Update the document title when the component mounts or the title changes
   useEffect(() => {
     setTitle(title);
@@ -33,18 +33,20 @@ const PortfolioBase = ({ title, serviceId }) => {
   };
 
   return (
-    <Box>
-      {/* Portfolio Title */}
-      <Box my={4}>
-        <Typography variant="h4">{title}</Typography>
-      </Box>
-      {/* Add Portfolio */}
-      <Box display="flex" justifyContent="flex-end">
-        <Button component={Link} to="/portfolio/new" variant="contained" color="primary" style={{ marginBottom: 20 }}>
-          Добавить проект
-        </Button>
-      </Box>
-      {/* Portfolio Grid */}
+    <Box width="100%">
+      {title && (
+        <>
+          <Box my={4}>
+            <Typography variant="h4">{title}</Typography>
+          </Box>
+          <Box display="flex" justifyContent="flex-end">
+            <Button component={Link} to="/portfolio/new" variant="contained" color="primary" style={{ marginBottom: 20 }}>
+              Добавить проект
+            </Button>
+          </Box>
+        </>
+      )}
+
       <Grid container spacing={2}>
         {/* Render portfolios if available, otherwise render Empty component */}
         {portfolioList.length !== 0 ? (
@@ -80,16 +82,16 @@ const PortfolioBase = ({ title, serviceId }) => {
                   {/* Action Buttons */}
                   <Box display="flex" gap={1} justifyContent="flex-end">
                     {/* Edit Button */}
-                    <Button variant="contained" size="small" color="primary" component={Link} to={`/portfolio/${portfolio.id}`}>
+                    <Button variant="outlined" size="small" color="primary" component={Link} to={`/portfolio/${portfolio.id}`}>
                       Изменить
                     </Button>
                     {/* Delete Button */}
-                    <Button onClick={() => handleDelete(portfolio.id)} variant="contained" size="small" color="error">
+                    <Button onClick={() => handleDelete(portfolio.id)} variant="outlined" size="small" color="error">
                       Удалить
                     </Button>
                     {/* View on Site Button */}
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       size="small"
                       color="secondary"
                       component={Link}

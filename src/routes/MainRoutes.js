@@ -5,6 +5,7 @@ import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 
 // render - utilities
+const HomePage = Loadable(lazy(() => import('pages/home/HomePage')));
 const Applications = Loadable(lazy(() => import('pages/requests/Applications')));
 const WebPages = Loadable(lazy(() => import('pages/requests/WebPages')));
 const CRM = Loadable(lazy(() => import('pages/requests/CRM')));
@@ -37,7 +38,12 @@ const PageNotFound = Loadable(lazy(() => import('pages/404/PageNotFound')));
 const MainRoutes = {
   path: '/',
   element: <MainLayout />,
+
   children: [
+    {
+      path: '/home',
+      element: <HomePage />
+    },
     {
       path: '',
       element: <Applications />
