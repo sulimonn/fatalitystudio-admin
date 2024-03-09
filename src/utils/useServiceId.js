@@ -15,7 +15,7 @@ export const useServiceId = (type) => {
       service = services.find((service) => service.title.includes('азработка сайто'));
       break;
     case 'seo':
-      service = services.find((service) => service.title.includes('SEO'));
+      service = services.find((service) => service.title.includes('еклама'));
       break;
     case 'design':
       service = services.find((service) => service.title.includes('Дизайн'));

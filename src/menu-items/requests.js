@@ -55,7 +55,7 @@ const requests = {
       icon: icons.DesignServicesOutlined
     },
     {
-      id: 'seo1',
+      id: 'seo',
       title: 'Реклама и SEO',
       type: 'item',
       url: '/requests/seo',

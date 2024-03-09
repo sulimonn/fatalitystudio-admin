@@ -6,7 +6,6 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   FormHelperText,
   Grid,
@@ -25,7 +24,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { login } from 'store/reducers/actions';
 
@@ -48,10 +46,6 @@ const AuthLogin = () => {
     event.preventDefault();
   };
 
-  React.useEffect(() => {
-    localStorage.setItem('keepSignIn', checked.toString());
-  }, [checked]);
-
   return (
     <>
       <Formik
@@ -69,7 +63,8 @@ const AuthLogin = () => {
             setStatus({ success: false });
             setSubmitting(false);
             if (!error) {
-              navigate('/', { replace: true });
+              localStorage.setItem('keepSignIn', checked.toString());
+              navigate('/home/');
             } else if (payload?.non_field_errors) {
               console.log(payload);
               setErrors({ submit: payload.non_field_errors[0] });
@@ -177,14 +172,6 @@ const AuthLogin = () => {
                     {isSubmitting ? <CircularProgress color="secondary" size={26} /> : 'Login'}
                   </Button>
                 </AnimateButton>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider>
-                  <Typography variant="caption"> Login with</Typography>
-                </Divider>
-              </Grid>
-              <Grid item xs={12}>
-                <FirebaseSocial />
               </Grid>
             </Grid>
           </form>
